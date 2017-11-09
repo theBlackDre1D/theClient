@@ -1,9 +1,12 @@
 package com.example.theblackdre1d.theclient.Activities
 
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Typeface
 import android.media.MediaPlayer
 import android.net.Uri
+import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.StrictMode
@@ -26,9 +29,17 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        //TODO: Find out best practice to dissable strict mode
         //Setting up permision for HTTP requests. This is bad way to do it better will be do it in background thread
-        val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
-        StrictMode.setThreadPolicy(policy)
+
+//        doAsync {
+//            val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
+//            StrictMode.setThreadPolicy(policy)
+//            uiThread {
+//                toast("Welcome!")
+//            }
+//        }
+
 
         //Setting up font
         val font: Typeface = Typeface.createFromAsset(assets,"fonts/Atlantic Bentley.ttf")
@@ -46,19 +57,32 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("CommitPrefEdits")
     override fun onResume() {
         super.onResume()
 
         var uri: Uri? = intent.data
         uri?.let {
-            if (uri.toString().startsWith(redirectURI)) {
-                var code = uri.getQueryParameter("code")
-                var params = mapOf("client_id" to clientID, "client_secret" to clientSecret, "code" to code)
-                var response = post("https://github.com/login/oauth/access_token", params = params, headers = mapOf("accept" to "application/json"))
-                var content = response.jsonObject
-                print(content)
-                var accessToken = content.getString("access_token")
+            //Because AsyncTask UI is still responsible
+            doAsync {
+                if (uri.toString().startsWith(redirectURI)) {
+                    var code = uri.getQueryParameter("code")
+                    var params = mapOf("client_id" to clientID, "client_secret" to clientSecret, "code" to code)
+                    var response = post("https://github.com/login/oauth/access_token", params = params, headers = mapOf("accept" to "application/json"))
+                    var content = response.jsonObject
+                    var accessToken = content.getString("access_token")
+                    val sharedPreferencies: SharedPreferences = application.getSharedPreferences("access_token", 0)
+                    var editor = sharedPreferencies.edit()
+                    editor.putString("access_token",accessToken)
+                    editor.commit()
+                    uiThread {
+                        toast("Access token: ${sharedPreferencies.getString("access_token", null)}")
+                    }
+                }
             }
+            
+
         }
+
     }
 }

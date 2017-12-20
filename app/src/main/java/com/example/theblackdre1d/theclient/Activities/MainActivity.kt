@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         //TODO: Find out best practice to dissable strict mode
-        //Setting up permision for HTTP requests. This is bad way to do it better will be do it in background thread
+        //Setting up permission for HTTP requests. This is bad way to do it better will be do it in background thread
 
 //        doAsync {
 //            val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
@@ -71,18 +71,16 @@ class MainActivity : AppCompatActivity() {
                     var response = post("https://github.com/login/oauth/access_token", params = params, headers = mapOf("accept" to "application/json"))
                     var content = response.jsonObject
                     var accessToken = content.getString("access_token")
-                    val sharedPreferencies: SharedPreferences = application.getSharedPreferences("access_token", 0)
-                    var editor = sharedPreferencies.edit()
+                    val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", 0)
+                    var editor = sharedPreferences.edit()
                     editor.putString("access_token",accessToken)
                     editor.commit()
                     uiThread {
-                        toast("Access token: ${sharedPreferencies.getString("access_token", null)}")
+                        toast("Access token: ${sharedPreferences.getString("access_token", null)}")
                     }
                 }
             }
-            
-
+            //TODO: Make waiting for asynchronus task and while waiting show some progress bar
         }
-
     }
 }

@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        //TODO: Find out best practice to dissable strict mode
+        //TODO: Find out best practice to disable strict mode
         //Setting up permission for HTTP requests. This is bad way to do it better will be do it in background thread
 
 //        doAsync {

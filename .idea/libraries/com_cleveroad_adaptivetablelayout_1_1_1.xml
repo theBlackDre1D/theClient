@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="com.cleveroad:adaptivetablelayout-1.1.1">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/adaptivetablelayout-1.1.1.aar/f9d9415abee0e4a3322569237f109a21/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/adaptivetablelayout-1.1.1.aar/f9d9415abee0e4a3322569237f109a21/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.cleveroad/adaptivetablelayout/1.1.1/a025be0fe3a4bb81d74dffb04dc03b6f358d6c09/adaptivetablelayout-1.1.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

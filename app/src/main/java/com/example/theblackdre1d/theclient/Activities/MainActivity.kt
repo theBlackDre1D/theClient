@@ -82,5 +82,7 @@ class MainActivity : AppCompatActivity() {
             }
             //TODO: Make waiting for asynchronus task and while waiting show some progress bar
         }
+        val intent = Intent(this, ProfileActivity::class.java)
+        startActivity(intent)
     }
 }

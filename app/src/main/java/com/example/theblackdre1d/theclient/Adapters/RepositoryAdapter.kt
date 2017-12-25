@@ -9,16 +9,19 @@ import com.example.theblackdre1d.theclient.Models.Repository
 import com.example.theblackdre1d.theclient.R
 import kotlinx.android.synthetic.main.repository_layout.view.*
 
-/**
- * Created by seremtinameno on 22.12.17.
- */
 class RepositoryAdapter(val repositoryList: ArrayList<Repository>) : RecyclerView.Adapter<RepositoryAdapter.ViewHolder>() {
     override fun getItemCount(): Int {
         return repositoryList.size
     }
 
     override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val repository: Repository = repositoryList[position]
+        holder?.let {
+            holder.headerTextView.text = repository.name
+            holder.subheaderTextView.text = repository.description
+        }
+
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
@@ -28,5 +31,7 @@ class RepositoryAdapter(val repositoryList: ArrayList<Repository>) : RecyclerVie
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val headerTextView = itemView.firstTextView as TextView
+        val subheaderTextView = itemView.secondTextView as TextView
+
     }
 }

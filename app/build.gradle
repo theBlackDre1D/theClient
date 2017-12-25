@@ -43,4 +43,5 @@ dependencies {
     compile 'com.github.inaka:killertask:v1.2'
     compile "com.cleveroad:adaptivetablelayout:1.1.1"
 
+    implementation 'com.android.support:cardview-v7:26.1.0'
 }

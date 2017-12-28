@@ -20,8 +20,6 @@ class RepositoryAdapter(val repositoryList: ArrayList<Repository>) : RecyclerVie
             holder.headerTextView.text = repository.name
             holder.subheaderTextView.text = repository.description
         }
-
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {

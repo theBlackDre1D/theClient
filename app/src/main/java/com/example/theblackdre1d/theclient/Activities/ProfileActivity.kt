@@ -1,5 +1,8 @@
 package com.example.theblackdre1d.theclient.Activities
 
+import android.content.Context
+import android.content.SharedPreferences
+import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
@@ -17,6 +20,8 @@ class ProfileActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
+        val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
+        val userToken: String? = sharedPreferences.getString("access_token",null)
 
         doAsync {
             val reposJSON = get("https://api.github.com/users/theblackdre1d/repos")
@@ -33,5 +38,10 @@ class ProfileActivity : AppCompatActivity() {
 
         val repositoriesAdapter = RepositoryAdapter(repositoriesList)
         repositoriesTable.adapter = repositoriesAdapter
+    }
+}
+class GetUserRepos(): AsyncTask<Unit, Unit, Unit>() {
+    override fun doInBackground(vararg params: Unit?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

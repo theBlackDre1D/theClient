@@ -10,15 +10,8 @@ import android.net.Uri
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.os.StrictMode
-import android.support.annotation.UiThread
-import android.support.v4.content.ContextCompat.startActivity
-import android.util.Log
-import android.util.Log.d
-import android.widget.Toast
 import com.example.theblackdre1d.theclient.Java.VideoViewOnPrepared
 import com.example.theblackdre1d.theclient.R
-import com.github.salomonbrys.kotson.toJson
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.*
 import khttp.post
@@ -38,20 +31,19 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
+//        val editor = sharedPreferences.edit()
+        val token: String? = sharedPreferences.getString("access_token",null)
+        token?.let {
+            val intent = Intent(this, ProfileActivity::class.java)
+            startActivity(intent)
+        }
         //TODO: Find out best practice to disable strict mode
         //Setting up permission for HTTP requests. This is bad way to do it better will be do it in background thread
 
-//        doAsync {
-//            val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
-//            StrictMode.setThreadPolicy(policy)
-//            uiThread {
-//                toast("Welcome!")
-//            }
-//        }
         //Setting up font
         val font: Typeface = Typeface.createFromAsset(assets,"fonts/Atlantic Bentley.ttf")
-        theClientText.setTypeface(font)
+        theClientText.typeface = font
 
         //Setting up looping background video
         val uri: Uri = Uri.parse("android.resource://"+packageName+"/"+ R.raw.backgorund_movie)
@@ -87,49 +79,12 @@ class MainActivity : AppCompatActivity() {
 //            }
 //        }
         ObtainAccessToken(uri, sharedPreferences).execute()
-
         val intent = Intent(this, ProfileActivity::class.java)
         startActivity(intent)
-//        uri?.let {
-//            var code = uri.getQueryParameter("code")
-//            var client = OkHttpClient()
-//            val httpURL: HttpUrl.Builder = HttpUrl.parse("https://github.com/login/oauth/access_token")!!.newBuilder()
-//            httpURL.addQueryParameter("client_id", clientID)
-//            httpURL.addQueryParameter("client_secret", clientSecret)
-//            httpURL.addQueryParameter("code", code)
-//            val requestURL = httpURL.build().toString()
-//            var requestAccessToken = Request.Builder()
-//                    .url(requestURL)
-//                    .build()
-//            client.newCall(requestAccessToken).enqueue(object: Callback {
-//                override fun onFailure(call: Call?, e: IOException?) {
-//                    alert ( "Something is wrong!", "While reaching API something went wrong" ) {
-//                        yesButton {  }
-//                    }.show()
-//                }
-//
-//                override fun onResponse(call: Call?, response: Response?) {
-//                    response?.let {
-//                        if (response.isSuccessful) {
-//                            val content = response.body()!!.string().toJson()
-//                            val accessToken = content
-//                            runOnUiThread(object : Runnable {
-//                                override fun run() {
-//                                    val intent = Intent(MainActivity(), ProfileActivity::class.java)
-//                                    startActivity(intent)
-//                                }
-//                            })
-//                        }
-//                    }
-//                }
-//            })
-//        }
     }
 }
 
-class ObtainAccessToken(content: Uri?, sharedPref: SharedPreferences): AsyncTask<Unit, Unit, Unit>() {
-    val uri = content
-    val sharedPref = sharedPref
+class ObtainAccessToken(val uri: Uri?, val sharedPref: SharedPreferences): AsyncTask<Unit, Unit, Unit>() {
     override fun doInBackground(vararg params: Unit?) {
         var clientID = "064b9848a992571c3dec"
         var clientSecret = "f7c894c87c650b578e9ae3efc043ce6861133b0f"
@@ -151,11 +106,5 @@ class ObtainAccessToken(content: Uri?, sharedPref: SharedPreferences): AsyncTask
                 }
             }
         }
-    }
-    override fun onPostExecute(result: Unit?) {
-        super.onPostExecute(result)
-//        toast("I got the Access token for you!")
-//        val intent = Intent(MainActivity(), ProfileActivity::class.java)
-//        startActivity(intent)
     }
 }

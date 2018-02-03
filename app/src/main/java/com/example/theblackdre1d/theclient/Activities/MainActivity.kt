@@ -49,8 +49,6 @@ class MainActivity : AppCompatActivity() {
 //                toast("Welcome!")
 //            }
 //        }
-
-
         //Setting up font
         val font: Typeface = Typeface.createFromAsset(assets,"fonts/Atlantic Bentley.ttf")
         theClientText.setTypeface(font)
@@ -70,25 +68,25 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("CommitPrefEdits")
    override fun onResume() {
         super.onResume()
-        val sharedPref2 = this.getPreferences(Context.MODE_PRIVATE)
+//        val sharedPref2 = this.getPreferences(Context.MODE_PRIVATE)
         val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
-        var uri: Uri? = intent.data
-        doAsync {
-            uri?.let {
-                if (uri.toString().startsWith(redirectURI)) {
-                    var code = uri.getQueryParameter("code")
-                    var params = mapOf("client_id" to clientID, "client_secret" to clientSecret, "code" to code)
-                    var response = post("https://github.com/login/oauth/access_token", params = params, headers = mapOf("accept" to "application/json"))
-                    var content = response.jsonObject
-                    var accessToken = content.getString("access_token")
-                    var editor = sharedPreferences.edit().apply {
-                        putString("access_token",accessToken)
-                        commit()
-                    }
-                }
-            }
-        }
-        ObtainAccessToken(uri).execute()
+        val uri: Uri? = intent.data
+//        doAsync {
+//            uri?.let {
+//                if (uri.toString().startsWith(redirectURI)) {
+//                    var code = uri.getQueryParameter("code")
+//                    var params = mapOf("client_id" to clientID, "client_secret" to clientSecret, "code" to code)
+//                    var response = post("https://github.com/login/oauth/access_token", params = params, headers = mapOf("accept" to "application/json"))
+//                    var content = response.jsonObject
+//                    var accessToken = content.getString("access_token")
+//                    var editor = sharedPreferences.edit().apply {
+//                        putString("access_token",accessToken)
+//                        commit()
+//                    }
+//                }
+//            }
+//        }
+        ObtainAccessToken(uri, sharedPreferences).execute()
 
         val intent = Intent(this, ProfileActivity::class.java)
         startActivity(intent)
@@ -126,14 +124,12 @@ class MainActivity : AppCompatActivity() {
 //                }
 //            })
 //        }
-
-
-
     }
 }
 
-class ObtainAccessToken(content: Uri?): AsyncTask<Unit, Unit, Unit>() {
+class ObtainAccessToken(content: Uri?, sharedPref: SharedPreferences): AsyncTask<Unit, Unit, Unit>() {
     val uri = content
+    val sharedPref = sharedPref
     override fun doInBackground(vararg params: Unit?) {
         var clientID = "064b9848a992571c3dec"
         var clientSecret = "f7c894c87c650b578e9ae3efc043ce6861133b0f"
@@ -142,13 +138,13 @@ class ObtainAccessToken(content: Uri?): AsyncTask<Unit, Unit, Unit>() {
         doAsync {
             uri?.let {
                 if (uri.toString().startsWith(redirectURI)) {
-                    val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
+//                    val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
                     var code = uri.getQueryParameter("code")
                     var params = mapOf("client_id" to clientID, "client_secret" to clientSecret, "code" to code)
                     var response = post("https://github.com/login/oauth/access_token", params = params, headers = mapOf("accept" to "application/json"))
                     var content = response.jsonObject
                     var accessToken = content.getString("access_token")
-                    var editor = sharedPreferences.edit().apply {
+                    var editor = sharedPref.edit().apply {
                         putString("access_token",accessToken)
                         commit()
                     }
@@ -159,7 +155,7 @@ class ObtainAccessToken(content: Uri?): AsyncTask<Unit, Unit, Unit>() {
     override fun onPostExecute(result: Unit?) {
         super.onPostExecute(result)
 //        toast("I got the Access token for you!")
-        val intent = Intent(MainActivity(), ProfileActivity::class.java)
-        startActivity()
+//        val intent = Intent(MainActivity(), ProfileActivity::class.java)
+//        startActivity(intent)
     }
 }

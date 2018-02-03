@@ -7,10 +7,12 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.widget.ImageView
 import android.widget.LinearLayout
 import com.example.theblackdre1d.theclient.Adapters.RepositoryAdapter
 import com.example.theblackdre1d.theclient.Models.Repository
 import com.example.theblackdre1d.theclient.R
+import com.squareup.picasso.Picasso
 import khttp.get
 import kotlinx.android.synthetic.main.activity_profile.*
 import org.jetbrains.anko.doAsync
@@ -26,7 +28,8 @@ class ProfileActivity : AppCompatActivity() {
         doAsync {
             val reposJSON = get("https://api.github.com/users/theblackdre1d/repos")
         }
-
+        val profilePicture = circularImageView as ImageView
+        Picasso.with(applicationContext).load("https://avatars1.githubusercontent.com/u/15018356?v=4").into(profilePicture)
         val repositoriesTable = RepositoryTable as RecyclerView
         repositoriesTable.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
         val repositoriesList = ArrayList<Repository>()
@@ -40,8 +43,9 @@ class ProfileActivity : AppCompatActivity() {
         repositoriesTable.adapter = repositoriesAdapter
     }
 }
-class GetUserRepos(): AsyncTask<Unit, Unit, Unit>() {
+class GetUserRepos(val sharedPred: SharedPreferences, val userToken: String?): AsyncTask<Unit, Unit, Unit>() {
     override fun doInBackground(vararg params: Unit?) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val url = "https://api.github.com/user/repos?access_token=${userToken}"
     }
 }

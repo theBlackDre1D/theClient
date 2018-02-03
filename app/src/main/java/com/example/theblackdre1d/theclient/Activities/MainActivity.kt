@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Typeface
-import android.media.MediaPlayer
 import android.net.Uri
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
@@ -15,13 +14,6 @@ import com.example.theblackdre1d.theclient.R
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.*
 import khttp.post
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.runBlocking
-import kotlinx.coroutines.experimental.android.UI
-import okhttp3.*
-import org.jetbrains.anko.coroutines.experimental.bg
-import org.jetbrains.anko.design.snackbar
-import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
     var clientID = "064b9848a992571c3dec"
@@ -38,8 +30,6 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, ProfileActivity::class.java)
             startActivity(intent)
         }
-        //TODO: Find out best practice to disable strict mode
-        //Setting up permission for HTTP requests. This is bad way to do it better will be do it in background thread
 
         //Setting up font
         val font: Typeface = Typeface.createFromAsset(assets,"fonts/Atlantic Bentley.ttf")

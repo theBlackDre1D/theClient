@@ -8,13 +8,19 @@ import android.widget.LinearLayout
 import com.example.theblackdre1d.theclient.Adapters.RepositoryAdapter
 import com.example.theblackdre1d.theclient.Models.Repository
 import com.example.theblackdre1d.theclient.R
+import khttp.get
 import kotlinx.android.synthetic.main.activity_profile.*
+import org.jetbrains.anko.doAsync
 
 class ProfileActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
+
+        doAsync {
+            val reposJSON = get("https://api.github.com/users/theblackdre1d/repos")
+        }
 
         val repositoriesTable = RepositoryTable as RecyclerView
         repositoriesTable.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)

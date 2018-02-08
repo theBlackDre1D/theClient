@@ -75,20 +75,21 @@ class MainActivity : AppCompatActivity() {
 }
 
 class ObtainAccessToken(val uri: Uri?, val sharedPref: SharedPreferences): AsyncTask<Unit, Unit, Unit>() {
+    @SuppressLint("ApplySharedPref")
     override fun doInBackground(vararg params: Unit?) {
-        var clientID = "064b9848a992571c3dec"
-        var clientSecret = "f7c894c87c650b578e9ae3efc043ce6861133b0f"
-        var redirectURI = "theclient://callback"
+        val clientID = "064b9848a992571c3dec"
+        val clientSecret = "f7c894c87c650b578e9ae3efc043ce6861133b0f"
+        val redirectURI = "theclient://callback"
 
         doAsync {
             uri?.let {
                 if (uri.toString().startsWith(redirectURI)) {
 //                    val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
-                    var code = uri.getQueryParameter("code")
-                    var params = mapOf("client_id" to clientID, "client_secret" to clientSecret, "code" to code)
-                    var response = post("https://github.com/login/oauth/access_token", params = params, headers = mapOf("accept" to "application/json"))
-                    var content = response.jsonObject
-                    var accessToken = content.getString("access_token")
+                    val code = uri.getQueryParameter("code")
+                    val params = mapOf("client_id" to clientID, "client_secret" to clientSecret, "code" to code)
+                    val response = post("https://github.com/login/oauth/access_token", params = params, headers = mapOf("accept" to "application/json"))
+                    val content = response.jsonObject
+                    val accessToken = content.getString("access_token")
                     var editor = sharedPref.edit().apply {
                         putString("access_token",accessToken)
                         commit()

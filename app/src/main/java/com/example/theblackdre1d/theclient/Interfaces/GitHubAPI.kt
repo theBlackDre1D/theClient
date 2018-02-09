@@ -1,5 +1,6 @@
 package com.example.theblackdre1d.theclient.Interfaces
 
+import com.example.theblackdre1d.theclient.Models.Result
 import com.example.theblackdre1d.theclient.Models.User
 import retrofit2.Call
 import retrofit2.Retrofit
@@ -7,6 +8,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
+import java.util.*
 
 interface GitHubAPI {
     @GET("user")

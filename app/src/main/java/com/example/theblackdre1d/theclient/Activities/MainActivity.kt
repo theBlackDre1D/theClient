@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import com.example.theblackdre1d.theclient.Java.VideoViewOnPrepared
 import com.example.theblackdre1d.theclient.R
 import kotlinx.android.synthetic.main.activity_main.*
@@ -90,6 +91,7 @@ class ObtainAccessToken(val uri: Uri?, val sharedPref: SharedPreferences): Async
                     val response = post("https://github.com/login/oauth/access_token", params = params, headers = mapOf("accept" to "application/json"))
                     val content = response.jsonObject
                     val accessToken = content.getString("access_token")
+                    Log.d("Token", accessToken)
                     var editor = sharedPref.edit().apply {
                         putString("access_token",accessToken)
                         commit()

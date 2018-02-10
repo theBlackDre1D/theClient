@@ -15,10 +15,12 @@ import com.example.theblackdre1d.theclient.Adapters.RepositoryAdapter
 import com.example.theblackdre1d.theclient.Interfaces.GitHubAPI
 import com.example.theblackdre1d.theclient.Models.Repository
 import com.example.theblackdre1d.theclient.R
+import com.example.theblackdre1d.theclient.Token
 import com.squareup.picasso.Picasso
 import khttp.get
 import kotlinx.android.synthetic.main.activity_profile.*
 import org.json.JSONArray
+import java.io.File
 
 class ProfileActivity : AppCompatActivity() {
 
@@ -31,14 +33,15 @@ class ProfileActivity : AppCompatActivity() {
         // Shared preferences initialization
         val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
         val userToken: String? = sharedPreferences.getString("access_token",null)
-        val testToken = "4d01a496b33f79738b0b5ef0b36e498a86980891"
-
-        // ==== Obtaining information from GitHub ====
-        // Obtain user details
-        val gitUserDetails = GetUserInfo(testToken).execute().get()
-        // ==== Obtain user repos ===
-        val gitHubResponse = GetUserRepos(testToken).execute().get()
-        val responseAsArray = gitHubResponse as JSONArray
+        val testToken = Token.getToken()
+        Log.d("Test Token ! ! ! :", testToken)
+//
+//        // ==== Obtaining information from GitHub ====
+//        // Obtain user details
+//        val gitUserDetails = GetUserInfo(testToken).execute().get()
+//        // ==== Obtain user repos ===
+//        val gitHubResponse = GetUserRepos(testToken).execute().get()
+//        val responseAsArray = gitHubResponse as JSONArray
 
 
 

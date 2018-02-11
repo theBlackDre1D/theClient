@@ -13,14 +13,13 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.example.theblackdre1d.theclient.Adapters.RepositoryAdapter
 import com.example.theblackdre1d.theclient.Interfaces.GitHubAPI
+import com.example.theblackdre1d.theclient.Models.GitHubRepository
 import com.example.theblackdre1d.theclient.Models.Repository
 import com.example.theblackdre1d.theclient.R
 import com.example.theblackdre1d.theclient.Token
 import com.squareup.picasso.Picasso
-import khttp.get
 import kotlinx.android.synthetic.main.activity_profile.*
 import org.json.JSONArray
-import java.io.File
 
 class ProfileActivity : AppCompatActivity() {
 
@@ -30,34 +29,48 @@ class ProfileActivity : AppCompatActivity() {
         // UI objects
         val profilePicture = circularImageView as ImageView
         val userName = name as TextView
-        // Shared preferences initialization
-        val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
-        val userToken: String? = sharedPreferences.getString("access_token",null)
-        val testToken = Token.getToken()
-        Log.d("Test Token ! ! ! :", testToken)
-//
-//        // ==== Obtaining information from GitHub ====
-//        // Obtain user details
-//        val gitUserDetails = GetUserInfo(testToken).execute().get()
-//        // ==== Obtain user repos ===
-//        val gitHubResponse = GetUserRepos(testToken).execute().get()
-//        val responseAsArray = gitHubResponse as JSONArray
-
-
-
-
-
-
-        // ==== Only for TEST purpose ====
-        Picasso.with(applicationContext).load("https://avatars1.githubusercontent.com/u/15018356?v=4").into(profilePicture)
         val repositoriesTable = RepositoryTable as RecyclerView
         repositoriesTable.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
         val repositoriesList = ArrayList<Repository>()
 
-        // ==== Testing repositories ====
-        for (i in 1..25) {
-            repositoriesList.add(Repository("Repo $i", "This is just test repo $i"))
+        // Shared preferences initialization
+        val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
+
+        val userToken: String? = sharedPreferences.getString("access_token",null)
+        val testToken = Token.getToken()
+        // ==== Obtaining information from GitHub ====
+            // Obtain user details
+        val gitUserDetails = GetUserInfo(testToken).execute().get()
+        userName.text = gitUserDetails["userName"] as String
+        Picasso.with(applicationContext).load(gitUserDetails["avatarURL"] as String).into(profilePicture)
+
+        // ==== Obtain user repos ===
+        val gitHubUserRepos = GetUserRepos(testToken).execute().get()
+        print("dsagdsaga")
+//        gitHubUserRepos?.let {
+        if (gitHubUserRepos != null) {
+            for (repo in gitHubUserRepos) {
+                var description: String
+                val nameOfRepo = repo.name
+                if (repo.description == null) {
+                    description = "No description provided"
+                } else {
+                    description = repo.description as String
+                }
+                val repository = Repository(nameOfRepo!!, description)
+                repositoriesList.add(repository)
+            }
         }
+//        }
+
+
+
+
+
+        // ==== Testing repositories ====
+//        for (i in 1..25) {
+//            repositoriesList.add(Repository("Repo $i", "This is just test repo $i"))
+//        }
 
         // ==== Creating table ====
         val repositoriesAdapter = RepositoryAdapter(repositoriesList)
@@ -68,11 +81,14 @@ class ProfileActivity : AppCompatActivity() {
 // =====================================================================================================================
 
 // AsyncTask class -> better to declare it in separate file
-class GetUserRepos(private val userToken: String?): AsyncTask<Unit, Unit, JSONArray>() {
-    override fun doInBackground(vararg params: Unit?): JSONArray? {
-        val url = "https://api.github.com/user/repos?access_token=${userToken}"
-        val response = get(url)
-        return response.jsonArray
+class GetUserRepos(private val userToken: String?): AsyncTask<Unit, Unit, List<GitHubRepository>?>() {
+    override fun doInBackground(vararg params: Unit?): List<GitHubRepository>? {
+//        val url = "https://api.github.com/user/repos?access_token=${userToken}"
+//        val response = get(url)
+//        return response.jsonArray
+        val gitHubService = GitHubAPI.create()
+        val gitRespond = gitHubService.getUserRepos(userToken!!).execute().body()
+        return gitRespond
     }
 }
 

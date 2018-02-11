@@ -1,7 +1,6 @@
 package com.example.theblackdre1d.theclient.Interfaces
 
-import com.example.theblackdre1d.theclient.Models.Result
-import com.example.theblackdre1d.theclient.Models.User
+import com.example.theblackdre1d.theclient.Models.*
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -13,6 +12,9 @@ import java.util.*
 interface GitHubAPI {
     @GET("user")
     fun getUser(@Query("access_token") accessToken: String): Call<User>
+
+    @GET("user/repos")
+    fun getUserRepos(@Query("access_token") accessToken: String): Call<List<GitHubRepository>>
 
     companion object Factory {
         fun create(): GitHubAPI {

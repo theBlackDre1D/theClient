@@ -30,6 +30,7 @@ class ProfileActivity : AppCompatActivity() {
         val profilePicture = circularImageView as ImageView
         val userName = name as TextView
         val repositoriesTable = RepositoryTable as RecyclerView
+        val createdAt = createdAtTextView as TextView
         repositoriesTable.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
         val repositoriesList = ArrayList<Repository>()
 
@@ -42,6 +43,7 @@ class ProfileActivity : AppCompatActivity() {
             // Obtain user details
         val gitUserDetails = GetUserInfo(testToken).execute().get()
         userName.text = gitUserDetails["userName"] as String
+        createdAt.text = gitUserDetails["createdAt"] as String
         Picasso.with(applicationContext).load(gitUserDetails["avatarURL"] as String).into(profilePicture)
 
         // ==== Obtain user repos ===
@@ -52,12 +54,13 @@ class ProfileActivity : AppCompatActivity() {
             for (repo in gitHubUserRepos) {
                 var description: String
                 val nameOfRepo = repo.name
+                val language = repo.language
                 if (repo.description == null) {
                     description = "No description provided"
                 } else {
                     description = repo.description as String
                 }
-                val repository = Repository(nameOfRepo!!, description)
+                val repository = Repository(nameOfRepo!!, description, language!!)
                 repositoriesList.add(repository)
             }
         }
@@ -101,6 +104,7 @@ class GetUserInfo(private val token: String): AsyncTask<Unit, Unit, HashMap<Stri
         gitRespond?.let {
             userDetails["userName"] = gitRespond.login
             userDetails.put("avatarURL", gitRespond.avatar_url)
+            userDetails["createdAt"] = gitRespond.created_at
         }
         return userDetails
     }

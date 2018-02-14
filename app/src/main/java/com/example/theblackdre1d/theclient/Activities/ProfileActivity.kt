@@ -19,7 +19,6 @@ import com.example.theblackdre1d.theclient.R
 import com.example.theblackdre1d.theclient.Token
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_profile.*
-import org.json.JSONArray
 
 class ProfileActivity : AppCompatActivity() {
 
@@ -36,8 +35,8 @@ class ProfileActivity : AppCompatActivity() {
 
         // Shared preferences initialization
         val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
-
         val userToken: String? = sharedPreferences.getString("access_token",null)
+
         val testToken = Token.getToken()
         // ==== Obtaining information from GitHub ====
             // Obtain user details
@@ -48,7 +47,6 @@ class ProfileActivity : AppCompatActivity() {
 
         // ==== Obtain user repos ===
         val gitHubUserRepos = GetUserRepos(testToken).execute().get()
-        print("dsagdsaga")
 //        gitHubUserRepos?.let {
         if (gitHubUserRepos != null) {
             for (repo in gitHubUserRepos) {
@@ -66,15 +64,6 @@ class ProfileActivity : AppCompatActivity() {
         }
 //        }
 
-
-
-
-
-        // ==== Testing repositories ====
-//        for (i in 1..25) {
-//            repositoriesList.add(Repository("Repo $i", "This is just test repo $i"))
-//        }
-
         // ==== Creating table ====
         val repositoriesAdapter = RepositoryAdapter(repositoriesList)
         repositoriesTable.adapter = repositoriesAdapter
@@ -86,9 +75,6 @@ class ProfileActivity : AppCompatActivity() {
 // AsyncTask class -> better to declare it in separate file
 class GetUserRepos(private val userToken: String?): AsyncTask<Unit, Unit, List<GitHubRepository>?>() {
     override fun doInBackground(vararg params: Unit?): List<GitHubRepository>? {
-//        val url = "https://api.github.com/user/repos?access_token=${userToken}"
-//        val response = get(url)
-//        return response.jsonArray
         val gitHubService = GitHubAPI.create()
         val gitRespond = gitHubService.getUserRepos(userToken!!).execute().body()
         return gitRespond

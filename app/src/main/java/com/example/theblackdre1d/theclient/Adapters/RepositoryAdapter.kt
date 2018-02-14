@@ -1,7 +1,6 @@
 package com.example.theblackdre1d.theclient.Adapters
 
 import android.content.Intent
-import android.support.v4.content.ContextCompat.startActivity
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater

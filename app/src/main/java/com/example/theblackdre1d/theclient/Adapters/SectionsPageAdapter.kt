@@ -1,22 +1,29 @@
 package com.example.theblackdre1d.theclient.Adapters
 
-import android.app.FragmentManager
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentPagerAdapter
 
-/**
- * Created by seremtinameno on 14.2.18.
- */
-class SectionsPageAdapter(fm: FragmentManager): FragmentPagerAdapter(fm) {
+class ViewPagerAdapater: FragmentPagerAdapter {
 
-    init {
+    private val mFragmentList: MutableList<Fragment> = mutableListOf()
+    private val mFragmentTitleList: MutableList<String> = mutableListOf()
 
+    constructor(manager: android.support.v4.app.FragmentManager): super (manager)
+
+    fun addFragment(fragment: Fragment, title: String) {
+        mFragmentList.add(fragment)
+        mFragmentTitleList.add(title)
     }
+
     override fun getItem(position: Int): Fragment {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return mFragmentList[position]
     }
 
     override fun getCount(): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return mFragmentList.size
+    }
+
+    override fun getPageTitle(position: Int): CharSequence {
+        return mFragmentTitleList[position]
     }
 }

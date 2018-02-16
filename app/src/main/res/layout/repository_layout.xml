@@ -59,6 +59,12 @@
                 android:paddingRight="20dp"
                 android:text="language"
                 android:textAlignment="viewEnd" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:id="@+id/accountHiddenTextView"
+                android:visibility="invisible"/>
         </LinearLayout>
 
 

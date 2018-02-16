@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
 //        val editor = sharedPreferences.edit()
         val token: String? = sharedPreferences.getString("access_token",null)
         token?.let {
-            val intent = Intent(this, ProfileActivity::class.java)
+            val intent = Intent(this, RepoListActivity::class.java)
             startActivity(intent)
         }
 
@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity() {
 //            }
 //        }
         ObtainAccessToken(uri, sharedPreferences).execute()
-        val intent = Intent(this, ProfileActivity::class.java)
+        val intent = Intent(this, RepoListActivity::class.java)
         startActivity(intent)
     }
 }

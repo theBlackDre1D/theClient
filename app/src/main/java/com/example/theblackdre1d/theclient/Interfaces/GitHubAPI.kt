@@ -6,6 +6,7 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 import java.util.*
 
@@ -15,6 +16,9 @@ interface GitHubAPI {
 
     @GET("user/repos")
     fun getUserRepos(@Query("access_token") accessToken: String): Call<List<GitHubRepository>>
+
+    @GET("repos/{name}/{repo}/commits")
+    fun getRepoCommits(@Path("name") name: String, @Path("repo") repo: String, @Query("access_token") accessToken: String): Call<List<GitHubCommit>>
 
     companion object Factory {
         fun create(): GitHubAPI {

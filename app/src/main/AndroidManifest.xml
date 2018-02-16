@@ -28,7 +28,7 @@
                     android:scheme="theclient" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.ProfileActivity" />
+        <activity android:name=".Activities.RepoListActivity" />
         <activity
             android:name=".Activities.RepositoryActivity"
             android:label="@string/title_activity_repository"

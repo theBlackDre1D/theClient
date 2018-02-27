@@ -1,20 +1,10 @@
 package com.example.theblackdre1d.theclient.Activities
 
 import android.support.design.widget.TabLayout
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
-
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
 import android.os.Bundle
 import android.support.v4.view.ViewPager
 import android.support.v7.widget.Toolbar
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
 import com.example.theblackdre1d.theclient.Adapters.ViewPagerAdapater
 import com.example.theblackdre1d.theclient.Fragments.CodeFragment
 import com.example.theblackdre1d.theclient.Fragments.CommitsFragment
@@ -40,14 +30,12 @@ class RepositoryActivity : AppCompatActivity() {
         setupViewPager(viewPager)
         val tabLayout = tabs as TabLayout
         tabLayout.setupWithViewPager(viewPager)
-
-
     }
 
     private fun setupViewPager(viewPager: ViewPager) {
         val adapter = ViewPagerAdapater(supportFragmentManager)
         adapter.addFragment(CommitsFragment(author, repoName), "Commits")
-        adapter.addFragment(ReadmeFragment(), "README")
+        adapter.addFragment(ReadmeFragment(author, repoName), "README")
         adapter.addFragment(CodeFragment(), "Codes")
         viewPager.adapter = adapter
     }

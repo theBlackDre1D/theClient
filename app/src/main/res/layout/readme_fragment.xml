@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
+    <us.feras.mdv.MarkdownView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Here will be your README"/>
+        android:layout_height="match_parent"
+        android:id="@+id/readmeMarkdownView">
+
+    </us.feras.mdv.MarkdownView>
 
 </android.support.constraint.ConstraintLayout>

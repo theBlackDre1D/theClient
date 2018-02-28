@@ -20,6 +20,9 @@ interface GitHubAPI {
     @GET("repos/{name}/{repo}/commits")
     fun getRepoCommits(@Path("name") name: String, @Path("repo") repo: String, @Query("access_token") accessToken: String): Call<List<GitHubCommit>>
 
+    @GET("repos/{name}/{repo}/contents")
+    fun getRepoContent(@Path("name") name: String, @Path("repo") repo: String, @Query("access_token") accessToken: String): Call<List<GitHubRepoContent>>
+
     companion object Factory {
         fun create(): GitHubAPI {
             val retrofit = Retrofit.Builder()

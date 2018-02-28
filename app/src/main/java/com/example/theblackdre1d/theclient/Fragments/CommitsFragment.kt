@@ -21,10 +21,10 @@ import kotlinx.android.synthetic.main.commits_fragment.view.*
 @SuppressLint("ValidFragment")
 class CommitsFragment(val userName: String, val repositoryName: String) : Fragment() {
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val token = Token.getToken()
-        val rootView = inflater!!.inflate(R.layout.commits_fragment, container, false)
+        val rootView = inflater.inflate(R.layout.commits_fragment, container, false)
         val userName: String = userName
         val repositoryName: String = repositoryName
         val commitsList = GetReposCommits(token, userName, repositoryName).execute().get()

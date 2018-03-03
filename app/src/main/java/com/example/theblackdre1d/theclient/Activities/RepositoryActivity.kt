@@ -36,7 +36,7 @@ class RepositoryActivity : AppCompatActivity() {
         val adapter = ViewPagerAdapater(supportFragmentManager)
         adapter.addFragment(CommitsFragment(author, repoName), "Commits")
         adapter.addFragment(ReadmeFragment(author, repoName), "README")
-        adapter.addFragment(CodeFragment(), "Codes")
+        adapter.addFragment(CodeFragment(author, repoName, token = ""), "Codes")
         viewPager.adapter = adapter
     }
 }

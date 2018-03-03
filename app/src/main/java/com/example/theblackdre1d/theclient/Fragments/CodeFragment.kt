@@ -24,7 +24,6 @@ class CodeFragment(val userName: String, val repoName: String, val token: String
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val rootView = inflater.inflate(R.layout.content_fragment, container, false)
         val listView = rootView.contentListView as ListView
-
         return rootView
     }
 }

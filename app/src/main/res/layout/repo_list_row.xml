@@ -8,13 +8,13 @@
     <ImageView
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:id="@+id/image"
+        android:id="@+id/avatarImageView"
         tools:ignore="InvalidId"
         android:src="@drawable/github"
         android:layout_margin="10dp"/>
 
     <LinearLayout
-        android:layout_toRightOf="@+id/image"
+        android:layout_toRightOf="@id/avatarImageView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -28,10 +28,10 @@
             android:textStyle="bold"/>
 
         <TextView
+            android:id="@+id/repositoryPath"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/repoPath"
-            android:text="@string/repoPath"/>
+            android:text="@string/repoPath" />
 
     </LinearLayout>
 

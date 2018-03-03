@@ -1,28 +1,49 @@
 package com.example.theblackdre1d.theclient.Adapters
 
 import android.app.Activity
+import android.content.Context
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import com.example.theblackdre1d.theclient.Models.GitHubRepoContent
-import us.feras.mdv.R
+import com.example.theblackdre1d.theclient.R
 
-class ContentListAdapter(private var activity: Activity, private var items: ArrayList<GitHubRepoContent>): BaseAdapter() {
+class ContentListAdapter(private var context: Context, private var items: ArrayList<GitHubRepoContent>): BaseAdapter() {
     private class ViewHolder(row: View?) {
         var imageView: ImageView? = null
         var repoName: TextView? = null
         var repoPath: TextView? = null
 
         init {
-            row?.let {
-                imageView = row.findViewById(R.id.repositoryName)
-            }
+            imageView = row?.findViewById(R.id.avatarImageView)
+            repoName = row?.findViewById(R.id.repositoryName)
+            repoPath = row?.findViewById(R.id.repositoryPath)
         }
     }
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        var view: View?
+        var viewHolder: ViewHolder?
+        if (convertView == null) {
+            val layout = LayoutInflater.from(context)
+            view = layout.inflate(R.layout.repo_list_row, parent, false)
+            viewHolder = ViewHolder(view)
+            view.tag = viewHolder
+        } else {
+            view = convertView
+            viewHolder = view.tag as ViewHolder
+        }
+        var row = getItem(position) as GitHubRepoContent
+        viewHolder.repoName?.text = row.name ?: "Unknown"
+        viewHolder.repoPath?.text = row.path ?: "Unknown"
+        if (row.type == "dir") {
+            viewHolder.imageView?.setImageResource(R.drawable.directory) ?: R.drawable.github
+        } else {
+            viewHolder.imageView?.setImageResource(R.drawable.file) ?: R.drawable.github
+        }
+        return view as View
     }
 
     override fun getItem(position: Int): Any {

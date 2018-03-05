@@ -11,7 +11,7 @@ import android.widget.TextView
 import com.example.theblackdre1d.theclient.Models.GitHubRepoContent
 import com.example.theblackdre1d.theclient.R
 
-class ContentListAdapter(private var context: Context, private var items: ArrayList<GitHubRepoContent>): BaseAdapter() {
+class ContentListAdapter(private var context: Context, private var items: List<GitHubRepoContent>): BaseAdapter() {
     private class ViewHolder(row: View?) {
         var imageView: ImageView? = null
         var repoName: TextView? = null
@@ -24,8 +24,8 @@ class ContentListAdapter(private var context: Context, private var items: ArrayL
         }
     }
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-        var view: View?
-        var viewHolder: ViewHolder?
+        val view: View?
+        val viewHolder: ViewHolder?
         if (convertView == null) {
             val layout = LayoutInflater.from(context)
             view = layout.inflate(R.layout.repo_list_row, parent, false)
@@ -35,7 +35,7 @@ class ContentListAdapter(private var context: Context, private var items: ArrayL
             view = convertView
             viewHolder = view.tag as ViewHolder
         }
-        var row = getItem(position) as GitHubRepoContent
+        val row = getItem(position) as GitHubRepoContent
         viewHolder.repoName?.text = row.name ?: "Unknown"
         viewHolder.repoPath?.text = row.path ?: "Unknown"
         if (row.type == "dir") {
@@ -47,7 +47,7 @@ class ContentListAdapter(private var context: Context, private var items: ArrayL
     }
 
     override fun getItem(position: Int): Any {
-        return items.get(position)
+        return items[position]
     }
 
     override fun getItemId(position: Int): Long {
@@ -55,6 +55,6 @@ class ContentListAdapter(private var context: Context, private var items: ArrayL
     }
 
     override fun getCount(): Int {
-        return items.count()
+        return items.size
     }
 }

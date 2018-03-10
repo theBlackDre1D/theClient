@@ -14,7 +14,6 @@ import com.example.theblackdre1d.theclient.Models.GitHubRepoContent
 import com.example.theblackdre1d.theclient.R
 import com.example.theblackdre1d.theclient.Token
 import kotlinx.android.synthetic.main.content_fragment.view.*
-import retrofit2.Call
 
 @SuppressLint("ValidFragment")
 class CodeFragment(val userName: String, val repoName: String, val token: String): Fragment() {

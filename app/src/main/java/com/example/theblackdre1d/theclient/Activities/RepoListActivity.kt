@@ -43,16 +43,16 @@ class RepoListActivity : AppCompatActivity() {
         val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
         val userToken: String? = sharedPreferences.getString("access_token",null)
 
-        val testToken = Token.getToken()
+        //val testToken = Token.getToken()
         // ==== Obtaining information from GitHub ====
         // Obtain user details
-        val gitUserDetails = GetUserInfo(testToken).execute().get()
+        val gitUserDetails = GetUserInfo(userToken).execute().get()
         userName.text = gitUserDetails["userName"] as String
         createdAt.text = gitUserDetails["createdAt"] as String
         Picasso.with(applicationContext).load(gitUserDetails["avatarURL"] as String).into(profilePicture)
 
         // ==== Obtain user repos ===
-        val gitHubUserRepos = GetUserRepos(userToken, progressBar).execute().get()
+        val gitHubUserRepos = GetUserRepos(userToken).execute().get()
 //        gitHubUserRepos?.let {
         if (gitHubUserRepos != null) {
             for (repo in gitHubUserRepos) {
@@ -84,27 +84,19 @@ class RepoListActivity : AppCompatActivity() {
 // =====================================================================================================================
 
 // AsyncTask class -> better to declare it in separate file
-class GetUserRepos(private val userToken: String?, @SuppressLint("StaticFieldLeak") private val progressBar: ProgressBar): AsyncTask<Unit, Unit, List<GitHubRepository>?>() {
-    override fun onPreExecute() {
-        super.onPreExecute()
-        progressBar.visibility = View.VISIBLE
-    }
+class GetUserRepos(private val userToken: String?): AsyncTask<Unit, Unit, List<GitHubRepository>?>() {
+
     override fun doInBackground(vararg params: Unit?): List<GitHubRepository>? {
         val gitHubService = GitHubAPI.create()
         val gitRespond = gitHubService.getUserRepos(userToken!!).execute().body()
         return gitRespond
     }
-
-    override fun onPostExecute(result: List<GitHubRepository>?) {
-        super.onPostExecute(result)
-        progressBar.visibility = View.GONE
-    }
 }
 
-class GetUserInfo(private val token: String): AsyncTask<Unit, Unit, HashMap<String, Any>>() {
+class GetUserInfo(private val token: String?): AsyncTask<Unit, Unit, HashMap<String, Any>>() {
     override fun doInBackground(vararg params: Unit?): HashMap<String, Any>? {
         val gitHubService = GitHubAPI.create()
-        val gitRespond = gitHubService.getUser(token).execute().body()
+        val gitRespond = gitHubService.getUser(token!!).execute().body()
         Log.d("Respond", "User from github: ${gitRespond.toString()}")
         val userDetails = hashMapOf<String, Any>()
         gitRespond?.let {

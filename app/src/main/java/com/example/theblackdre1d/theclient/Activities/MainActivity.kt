@@ -26,10 +26,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
         val token: String? = sharedPreferences.getString("access_token",null)
-        val let = token?.let {
-            val intent = Intent(this, RepoListActivity::class.java)
-            startActivity(intent)
-        }
 
         Prefs.Builder()
                 .setContext(this)
@@ -37,6 +33,12 @@ class MainActivity : AppCompatActivity() {
                 .setPrefsName("loginPrefs")
                 .setUseDefaultSharedPreference(true)
                 .build()
+
+        if (token != null) {
+            val intent = Intent(this, RepoListActivity::class.java)
+            startActivity(intent)
+        }
+
 
         //Setting up font
         val font: Typeface = Typeface.createFromAsset(assets,"fonts/Atlantic Bentley.ttf")
@@ -62,7 +64,7 @@ class MainActivity : AppCompatActivity() {
             val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
             val uri: Uri? = intent.data
             //TODO: This must be elsewhere not here because lifecycle run onResume funcition when app is lanchunh!!!
-            ObtainAccessToken(uri, sharedPreferences).execute()
+            ObtainAccessToken(uri).execute()
             val intent = Intent(this, RepoListActivity::class.java)
             startActivity(intent)
         }
@@ -74,7 +76,7 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-class ObtainAccessToken(val uri: Uri?, val sharedPref: SharedPreferences): AsyncTask<Unit, Unit, Unit>() {
+class ObtainAccessToken(val uri: Uri?): AsyncTask<Unit, Unit, Unit>() {
     @SuppressLint("ApplySharedPref", "CommitPrefEdits")
     override fun doInBackground(vararg params: Unit?) {
         val clientID = Token.clientID
@@ -89,10 +91,11 @@ class ObtainAccessToken(val uri: Uri?, val sharedPref: SharedPreferences): Async
                 val content = response.jsonObject
                 val accessToken = content.getString("access_token")
                 Log.d("Token", accessToken)
-                var editor = sharedPref.edit().apply {
-                    putString("access_token",accessToken)
-                    commit()
-                }
+                Prefs.putString("access_token",accessToken)
+//                var editor = sharedPref.edit().apply {
+//                    putString("access_token",accessToken)
+//                    commit()
+//                }
             }
         }
     }

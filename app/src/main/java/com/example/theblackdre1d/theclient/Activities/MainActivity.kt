@@ -20,7 +20,6 @@ import khttp.post
 class MainActivity : AppCompatActivity() {
     var clientID = Token.clientID
     var redirectURI = "theclient://callback"
-    var skipMainActivity = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         backgroundVideo.setVideoURI(uri)
         backgroundVideo.start()
         val videoLooping = VideoViewOnPrepared(backgroundVideo)
-        skipMainActivity = Prefs.getBoolean("skip", false)
+        val skipMainActivity = Prefs.getBoolean("skip", false)
         if (skipMainActivity) {
 //            skipMainActivity = true
             val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)

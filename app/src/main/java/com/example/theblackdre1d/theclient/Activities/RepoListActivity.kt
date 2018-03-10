@@ -20,6 +20,7 @@ import com.example.theblackdre1d.theclient.Models.GitHubRepository
 import com.example.theblackdre1d.theclient.Models.Repository
 import com.example.theblackdre1d.theclient.R
 import com.example.theblackdre1d.theclient.Token
+import com.pixplicity.easyprefs.library.Prefs
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_repo_list.*
 
@@ -28,6 +29,7 @@ class RepoListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_repo_list)
+        Prefs.putBoolean("skip", false)
         // UI objects
         val profilePicture = circularImageView as ImageView
         val userName = name as TextView
@@ -50,7 +52,7 @@ class RepoListActivity : AppCompatActivity() {
         Picasso.with(applicationContext).load(gitUserDetails["avatarURL"] as String).into(profilePicture)
 
         // ==== Obtain user repos ===
-        val gitHubUserRepos = GetUserRepos(testToken, progressBar).execute().get()
+        val gitHubUserRepos = GetUserRepos(userToken, progressBar).execute().get()
 //        gitHubUserRepos?.let {
         if (gitHubUserRepos != null) {
             for (repo in gitHubUserRepos) {
@@ -71,6 +73,11 @@ class RepoListActivity : AppCompatActivity() {
         // ==== Creating table ====
         val repositoriesAdapter = RepoListAdapter(repositoriesList)
         repositoriesTable.adapter = repositoriesAdapter
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        Prefs.putBoolean("skip", false)
     }
 }
 

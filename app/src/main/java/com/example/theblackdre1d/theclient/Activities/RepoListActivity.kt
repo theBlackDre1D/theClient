@@ -8,18 +8,16 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.ProgressBar
 import android.widget.TextView
 import com.example.theblackdre1d.theclient.Adapters.RepoListAdapter
 import com.example.theblackdre1d.theclient.Interfaces.GitHubAPI
 import com.example.theblackdre1d.theclient.Models.GitHubRepository
 import com.example.theblackdre1d.theclient.Models.Repository
+import com.example.theblackdre1d.theclient.Models.User
 import com.example.theblackdre1d.theclient.R
-import com.example.theblackdre1d.theclient.Token
 import com.pixplicity.easyprefs.library.Prefs
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_repo_list.*
@@ -34,7 +32,6 @@ class RepoListActivity : AppCompatActivity() {
         val profilePicture = circularImageView as ImageView
         val userName = name as TextView
         val repositoriesTable = RepositoryTable as RecyclerView
-        val progressBar = progressBar as ProgressBar
         val createdAt = createdAtTextView as TextView
         repositoriesTable.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
         val repositoriesList = ArrayList<Repository>()
@@ -47,9 +44,11 @@ class RepoListActivity : AppCompatActivity() {
         // ==== Obtaining information from GitHub ====
         // Obtain user details
         val gitUserDetails = GetUserInfo(userToken).execute().get()
-        userName.text = gitUserDetails["userName"] as String
-        createdAt.text = gitUserDetails["createdAt"] as String
-        Picasso.with(applicationContext).load(gitUserDetails["avatarURL"] as String).into(profilePicture)
+        
+        //TODO: Find why some atributes are null
+        userName.text = gitUserDetails.login as String
+        createdAt.text = gitUserDetails.createdAt as String
+        Picasso.with(applicationContext).load(gitUserDetails.avatarUrl).into(profilePicture)
 
         // ==== Obtain user repos ===
         val gitHubUserRepos = GetUserRepos(userToken).execute().get()
@@ -64,7 +63,7 @@ class RepoListActivity : AppCompatActivity() {
                 } else {
                     description = repo.description as String
                 }
-                val repository = Repository(nameOfRepo!!, description, language!!, gitUserDetails["userName"] as String)
+                val repository = Repository(nameOfRepo!!, description, language!!, gitUserDetails.login!!)
                 repositoriesList.add(repository)
             }
         }
@@ -93,17 +92,17 @@ class GetUserRepos(private val userToken: String?): AsyncTask<Unit, Unit, List<G
     }
 }
 
-class GetUserInfo(private val token: String?): AsyncTask<Unit, Unit, HashMap<String, Any>>() {
-    override fun doInBackground(vararg params: Unit?): HashMap<String, Any>? {
+class GetUserInfo(private val token: String?): AsyncTask<Unit, Unit, User>() {
+    override fun doInBackground(vararg params: Unit?): User? {
         val gitHubService = GitHubAPI.create()
-        val gitRespond = gitHubService.getUser(token!!).execute().body()
-        Log.d("Respond", "User from github: ${gitRespond.toString()}")
-        val userDetails = hashMapOf<String, Any>()
-        gitRespond?.let {
-            userDetails["userName"] = gitRespond.login
-            userDetails.put("avatarURL", gitRespond.avatar_url)
-            userDetails["createdAt"] = gitRespond.created_at
-        }
-        return userDetails
+        val gitUser = gitHubService.getUser(token!!).execute().body()
+//        Log.d("Respond", "User from github: ${gitRespond.toString()}")
+//        val userDetails = hashMapOf<String, Any>()
+//        gitRespond?.let {
+//            userDetails["userName"] = gitRespond.login
+//            userDetails.put("avatarURL", gitRespond.avatar_url)
+//            userDetails["createdAt"] = gitRespond.created_at
+//        }
+        return gitUser
     }
 }

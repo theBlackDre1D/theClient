@@ -2,9 +2,6 @@ package com.example.theblackdre1d.theclient.Models
 
 import com.squareup.moshi.Json
 
-/**
- * Created by seremtinameno on 11.2.18.
- */
 data class GitHubRepository(
         @Json(name = "id") val id:                                      Int?,
         @Json(name = "name") val name:                                  String?,

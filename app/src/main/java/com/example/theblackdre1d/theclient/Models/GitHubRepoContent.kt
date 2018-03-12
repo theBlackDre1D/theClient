@@ -16,7 +16,7 @@ data class GitHubRepoContent(
 		@Json(name = "git_url") val gitUrl:             String?,
 		@Json(name = "download_url") val downloadUrl:   String?,
 		@Json(name = "type") val type:                  String?,
-		@Json(name = "_links") val links:               Links?
+		@Json(name = "_links") val linksPullRequest:    Links?
 )
 
 data class Links(

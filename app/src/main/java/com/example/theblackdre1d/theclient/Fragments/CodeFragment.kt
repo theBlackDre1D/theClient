@@ -13,6 +13,7 @@ import com.example.theblackdre1d.theclient.Interfaces.GitHubAPI
 import com.example.theblackdre1d.theclient.Models.GitHubRepoContent
 import com.example.theblackdre1d.theclient.R
 import com.example.theblackdre1d.theclient.Token
+import com.pixplicity.easyprefs.library.Prefs
 import kotlinx.android.synthetic.main.content_fragment.view.*
 
 @SuppressLint("ValidFragment")
@@ -25,7 +26,7 @@ class CodeFragment(val userName: String, val repoName: String, val token: String
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val rootView = inflater.inflate(R.layout.content_fragment, container, false)
         val listView = rootView.contentListView as ListView
-        val contentList = GetRepoContent(userName, repoName, Token.getToken()).execute().get()
+        val contentList = GetRepoContent(userName, repoName, Prefs.getString("access_token", null)).execute().get()
         listView.adapter = ContentListAdapter(context!!, contentList)
         return rootView
     }

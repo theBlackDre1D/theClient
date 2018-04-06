@@ -14,10 +14,6 @@ import kotlinx.android.synthetic.main.readme_fragment.view.*
 @SuppressLint("ValidFragment")
 class ReadmeFragment(val userName: String, val repoName: String, val branch: String? = "master"): Fragment() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val rootView = inflater.inflate(R.layout.readme_fragment, container, false)
         val stringRepo = GetREADME(userName, repoName, branch).execute().get()
@@ -27,9 +23,6 @@ class ReadmeFragment(val userName: String, val repoName: String, val branch: Str
 }
 
 class GetREADME(val userName: String, val repoName: String, val branch: String? = "master"): AsyncTask<Unit, Unit, String>() {
-    override fun onPreExecute() {
-        super.onPreExecute()
-    }
 
     override fun doInBackground(vararg params: Unit?): String {
         val readMe = get("https://raw.githubusercontent.com/$userName/$repoName/$branch/README.md")

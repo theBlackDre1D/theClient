@@ -17,25 +17,24 @@ class RepoListAdapter(val repositoryList: ArrayList<Repository>) : RecyclerView.
         return repositoryList.size
     }
 
-    override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val repository: Repository = repositoryList[position]
-        holder?.let {
-            holder.headerTextView.text = repository.name
-            holder.subheaderTextView.text = repository.description
-            holder.languageTextView.text = repository.language
-            holder.accountTextView.text = repository.account
-            holder.itemView.setOnClickListener {
-                Log.d("CLICKED: ", "You clicked at me! :)")
-                val intent = Intent(holder.itemView.context, RepositoryActivity::class.java)
-                intent.putExtra("author", repository.account)
-                intent.putExtra("repoName", repository.name)
-                holder.itemView.context.startActivity(intent)
-            }
+
+        holder.headerTextView.text = repository.name
+        holder.subheaderTextView.text = repository.description
+        holder.languageTextView.text = repository.language
+        holder.accountTextView.text = repository.account
+        holder.itemView.setOnClickListener {
+            Log.d("CLICKED: ", "You clicked at me! :)")
+            val intent = Intent(holder.itemView.context, RepositoryActivity::class.java)
+            intent.putExtra("author", repository.account)
+            intent.putExtra("repoName", repository.name)
+            holder.itemView.context.startActivity(intent)
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
-        val viewGroup = LayoutInflater.from(parent?.context).inflate(R.layout.repository_layout, parent, false)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val viewGroup = LayoutInflater.from(parent.context).inflate(R.layout.repository_layout, parent, false)
         return ViewHolder(viewGroup)
     }
 

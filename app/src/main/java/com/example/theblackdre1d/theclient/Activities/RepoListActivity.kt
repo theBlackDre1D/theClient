@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -20,6 +21,7 @@ import com.example.theblackdre1d.theclient.Models.User
 import com.example.theblackdre1d.theclient.R
 import com.pixplicity.easyprefs.library.Prefs
 import com.squareup.picasso.Picasso
+import khttp.get
 import kotlinx.android.synthetic.main.activity_repo_list.*
 
 class RepoListActivity : AppCompatActivity() {
@@ -39,16 +41,17 @@ class RepoListActivity : AppCompatActivity() {
         // Shared preferences initialization
         val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
         val userToken: String? = sharedPreferences.getString("access_token",null)
+        Log.i("TOKEN", userToken)
 
-        //val testToken = Token.getToken()
+
         // ==== Obtaining information from GitHub ====
         // Obtain user details
+        // TODO: Token is null now
         val gitUserDetails = GetUserInfo(userToken).execute().get()
-        
         //TODO: Find why some atributes are null
-        userName.text = gitUserDetails.login as String
-        createdAt.text = gitUserDetails.createdAt as String
-        Picasso.with(applicationContext).load(gitUserDetails.avatarUrl).into(profilePicture)
+        userName.text = gitUserDetails["userName"] as String
+        createdAt.text = gitUserDetails["createdAt"] as String
+        Picasso.with(applicationContext).load(gitUserDetails["avatarURL"] as String).into(profilePicture)
 
         // ==== Obtain user repos ===
         val gitHubUserRepos = GetUserRepos(userToken).execute().get()
@@ -63,12 +66,11 @@ class RepoListActivity : AppCompatActivity() {
                 } else {
                     description = repo.description as String
                 }
-                val repository = Repository(nameOfRepo!!, description, language!!, gitUserDetails.login!!)
+                val repository = Repository(nameOfRepo!!, description, language!!, gitUserDetails["userName"] as String)
                 repositoriesList.add(repository)
             }
         }
 //        }
-
         // ==== Creating table ====
         val repositoriesAdapter = RepoListAdapter(repositoriesList)
         repositoriesTable.adapter = repositoriesAdapter
@@ -92,17 +94,25 @@ class GetUserRepos(private val userToken: String?): AsyncTask<Unit, Unit, List<G
     }
 }
 
-class GetUserInfo(private val token: String?): AsyncTask<Unit, Unit, User>() {
-    override fun doInBackground(vararg params: Unit?): User? {
-        val gitHubService = GitHubAPI.create()
-        val gitUser = gitHubService.getUser(token!!).execute().body()
+class GetUserInfo(private val token: String?): AsyncTask<Unit, Unit, HashMap<String, Any>>() {
+    override fun doInBackground(vararg params: Unit?): HashMap<String, Any> {
+//        val gitHubService = GitHubAPI.create()
+//        val gitRespond = gitHubService.getUser(token!!).execute().body()
 //        Log.d("Respond", "User from github: ${gitRespond.toString()}")
-//        val userDetails = hashMapOf<String, Any>()
+        val response = get("https://api.github.com/user?access_token=$token")
+        val JSONresponse = response.jsonObject
+        val avaterURL = JSONresponse.getString("avatar_url")
+        val userName = JSONresponse.getString("login")
+        val createdAt = JSONresponse.getString("created_at")
+        val userDetails = hashMapOf<String, Any>()
+        userDetails.put("avatarURL", avaterURL)
+        userDetails.put("userName", userName)
+        userDetails.put("createdAt", createdAt)
 //        gitRespond?.let {
-//            userDetails["userName"] = gitRespond.login
-//            userDetails.put("avatarURL", gitRespond.avatar_url)
-//            userDetails["createdAt"] = gitRespond.created_at
+//            userDetails.put("userName", gitRespond.login!!)
+//            userDetails.put("avatarURL", gitRespond.avatarUrl!!)
+//            userDetails.put("createdAt", gitRespond.createdAt!!)
 //        }
-        return gitUser
+        return userDetails
     }
 }

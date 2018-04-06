@@ -2,11 +2,13 @@ package com.example.theblackdre1d.theclient.Fragments
 
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +22,16 @@ import kotlinx.android.synthetic.main.commits_fragment.view.*
 
 @SuppressLint("ValidFragment")
 class CommitsFragment(val userName: String, val repositoryName: String) : Fragment() {
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        Log.i("LIFECYCLE", "OnAttatch")
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        Log.i("LIFECYCLE", "On activity created")
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -38,6 +50,7 @@ class CommitsFragment(val userName: String, val repositoryName: String) : Fragme
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.i("LIFECYCLE", "onCreate")
     }
 }
 

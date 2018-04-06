@@ -39,7 +39,6 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-
         //Setting up font
         val font: Typeface = Typeface.createFromAsset(assets,"fonts/Atlantic Bentley.ttf")
         theClientText.typeface = font
@@ -63,8 +62,7 @@ class MainActivity : AppCompatActivity() {
 //            skipMainActivity = true
             val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
             val uri: Uri? = intent.data
-            //TODO: This must be elsewhere not here because lifecycle run onResume funcition when app is lanchunh!!!
-            ObtainAccessToken(uri).execute()
+            ObtainAccessToken(uri, sharedPreferences).execute()
             val intent = Intent(this, RepoListActivity::class.java)
             startActivity(intent)
         }
@@ -76,7 +74,7 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-class ObtainAccessToken(val uri: Uri?): AsyncTask<Unit, Unit, Unit>() {
+class ObtainAccessToken(val uri: Uri?, var sharedPref: SharedPreferences): AsyncTask<Unit, Unit, Unit>() {
     @SuppressLint("ApplySharedPref", "CommitPrefEdits")
     override fun doInBackground(vararg params: Unit?) {
         val clientID = Token.clientID
@@ -90,12 +88,13 @@ class ObtainAccessToken(val uri: Uri?): AsyncTask<Unit, Unit, Unit>() {
                 val response = post("https://github.com/login/oauth/access_token", params = params, headers = mapOf("accept" to "application/json"))
                 val content = response.jsonObject
                 val accessToken = content.getString("access_token")
-                Log.d("Token", accessToken)
-                Prefs.putString("access_token",accessToken)
-//                var editor = sharedPref.edit().apply {
-//                    putString("access_token",accessToken)
-//                    commit()
-//                }
+                Log.i("Token", accessToken)
+              //  Log.d("Token", accessToken)
+               // Prefs.putString("access_token",accessToken)
+                sharedPref.edit().apply {
+                    putString("access_token",accessToken)
+                    commit()
+                }
             }
         }
     }

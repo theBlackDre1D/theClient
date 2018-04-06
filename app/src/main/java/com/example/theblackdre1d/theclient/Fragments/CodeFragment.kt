@@ -26,7 +26,7 @@ class CodeFragment(val userName: String, val repoName: String, val token: String
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val rootView = inflater.inflate(R.layout.content_fragment, container, false)
         val listView = rootView.contentListView as ListView
-        val contentList = GetRepoContent(userName, repoName, Prefs.getString("access_token", null)).execute().get()
+        val contentList = GetRepoContent(userName, repoName, token).execute().get()
         listView.adapter = ContentListAdapter(context!!, contentList)
         return rootView
     }

@@ -23,34 +23,21 @@ import kotlinx.android.synthetic.main.commits_fragment.view.*
 @SuppressLint("ValidFragment")
 class CommitsFragment(val userName: String, val repositoryName: String) : Fragment() {
 
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        Log.i("LIFECYCLE", "OnAttatch")
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        Log.i("LIFECYCLE", "On activity created")
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        val token = Token.getToken()
+//        val token = Token.getToken()
+        val settings = this.activity?.getSharedPreferences("access_token", Context.MODE_PRIVATE)
+        val token = settings?.getString("access_token", null)
         val rootView = inflater.inflate(R.layout.commits_fragment, container, false)
-        val userName: String = userName
-        val repositoryName: String = repositoryName
-        val commitsList = GetReposCommits(token, userName, repositoryName).execute().get()
+        //val userName: String = userName
+        //val repositoryName: String = repositoryName
+        val commitsList = GetReposCommits(token!!, userName, repositoryName).execute().get()
         val table = rootView.commitsRecyclerView as RecyclerView
         val context = container!!.context
         table.layoutManager = LinearLayoutManager(context, LinearLayout.VERTICAL, false)
         val commitsAdapter = CommitsAdapter(commitsList)
         table.adapter = commitsAdapter
         return rootView
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        Log.i("LIFECYCLE", "onCreate")
     }
 }
 

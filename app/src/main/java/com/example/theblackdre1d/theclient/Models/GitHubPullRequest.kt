@@ -1,7 +1,7 @@
 package com.example.theblackdre1d.theclient.Models
 import com.squareup.moshi.Json
 
-data class GitHubPullRequests (
+data class GitHubPullRequest (
         @Json(name = "url") val url:                                    String?,
         @Json(name = "id") val id:                                      Int?,
         @Json(name = "html_url") val htmlUrl:                           String?,
@@ -12,7 +12,7 @@ data class GitHubPullRequests (
         @Json(name = "state") val state:                                String?,
         @Json(name = "locked") val locked:                              Boolean?,
         @Json(name = "title") val title:                                String?,
-        @Json(name = "user") val user:                                  UserPullRequests?, /////////////////////
+        @Json(name = "user") val user:                                  UserPullRequests?,
         @Json(name = "body") val body:                                  String?,
         @Json(name = "created_at") val createdAt:                       String?,
         @Json(name = "updated_at") val updatedAt:                       String?,
@@ -79,7 +79,7 @@ data class Head(
 		@Json(name = "label") val label:                                String?,
 		@Json(name = "ref") val ref:                                    String?,
 		@Json(name = "sha") val sha:                                    String?,
-		@Json(name = "user") val user:                                  UserPullRequests?, /////////////////////
+		@Json(name = "user") val user:                                  UserPullRequests?,
 		@Json(name = "repo") val repo:                                  Repo?
 )
 
@@ -177,7 +177,7 @@ data class Base(
         @Json(name = "label") val label:                                String?,
         @Json(name = "ref") val ref:                                    String?,
         @Json(name = "sha") val sha:                                    String?,
-        @Json(name = "user") val user:                                  UserPullRequests?, ///////////////////////////////
+        @Json(name = "user") val user:                                  UserPullRequests?,
         @Json(name = "repo") val repo:                                  Repo?
 )
 

@@ -7,9 +7,11 @@ import android.os.Bundle
 import android.support.v4.view.ViewPager
 import android.support.v7.widget.Toolbar
 import android.util.Log
+import com.example.theblackdre1d.theclient.Adapters.PullsAdapter
 import com.example.theblackdre1d.theclient.Adapters.ViewPagerAdapater
 import com.example.theblackdre1d.theclient.Fragments.CodeFragment
 import com.example.theblackdre1d.theclient.Fragments.CommitsFragment
+import com.example.theblackdre1d.theclient.Fragments.PullRequestsFragment
 import com.example.theblackdre1d.theclient.Fragments.ReadmeFragment
 import com.example.theblackdre1d.theclient.R
 import com.example.theblackdre1d.theclient.Token
@@ -40,6 +42,7 @@ class RepositoryActivity : AppCompatActivity() {
         adapter.addFragment(CommitsFragment(author, repoName), "Commits")
         adapter.addFragment(ReadmeFragment(author, repoName), "README")
         adapter.addFragment(CodeFragment(author, repoName, Token.getToken()), "Codes")
+        adapter.addFragment(PullRequestsFragment(author, repoName), "Pull Requests")
         viewPager.adapter = adapter
     }
 }

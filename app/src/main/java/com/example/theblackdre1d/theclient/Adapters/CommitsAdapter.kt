@@ -18,7 +18,6 @@ class CommitsAdapter(private val commits: List<GitHubCommit>): RecyclerView.Adap
 
     override fun onBindViewHolder(holder: CommitsHolder, position: Int) {
         val commit: GitHubCommit = commits[position]
-
         holder.message.text = commit.commit?.message ?: "Error while unwrapping commit's content"
         holder.author.text = commit.commit?.committer?.name ?: "Error while unwrapping author's name"
         holder.date.text = commit.commit?.committer?.date ?: "Error while unwrapping date of commit"
@@ -28,27 +27,9 @@ class CommitsAdapter(private val commits: List<GitHubCommit>): RecyclerView.Adap
         }
     }
 
-//    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): CommitsHolder {
-//        val viewGroup = LayoutInflater.from(parent?.context).inflate(R.layout.commit_item, parent, false)
-//        return  CommitsHolder(viewGroup)
-//    }
-
     override fun getItemCount(): Int {
         return commits.size
     }
-//
-//    override fun onBindViewHolder(holder: CommitsHolder?, position: Int) {
-//        val commit: GitHubCommit = commits[position]
-//        holder?.let {
-//            holder.message.text = commit.commit?.message ?: "Error while unwrapping commit's content"
-//            holder.author.text = commit.commit?.committer?.name ?: "Error while unwrapping author's name"
-//            holder.date.text = commit.commit?.committer?.date ?: "Error while unwrapping date of commit"
-//            holder.itemView.setOnClickListener {
-//                val toast = Toast.makeText(holder.itemView.context, "Au, that hurts!", Toast.LENGTH_SHORT)
-//                toast.show()
-//            }
-//        }
-//    }
 
     class CommitsHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         val message = itemView.messageTextView as TextView

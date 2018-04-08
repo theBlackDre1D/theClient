@@ -23,8 +23,11 @@ import com.pixplicity.easyprefs.library.Prefs
 import com.squareup.picasso.Picasso
 import khttp.get
 import kotlinx.android.synthetic.main.activity_repo_list.*
+import org.jetbrains.anko.alert
+import org.jetbrains.anko.yesButton
 
 class RepoListActivity : AppCompatActivity() {
+    val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,9 +40,7 @@ class RepoListActivity : AppCompatActivity() {
         val createdAt = createdAtTextView as TextView
         repositoriesTable.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
         val repositoriesList = ArrayList<Repository>()
-
         // Shared preferences initialization
-        val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
         val userToken: String? = sharedPreferences.getString("access_token",null)
         Log.i("TOKEN", userToken)
 
@@ -78,7 +79,13 @@ class RepoListActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        Prefs.putBoolean("skip", false)
+        alert("Do you wanna log off?") {
+            title = "Log off"
+            yesButton {
+                Prefs.putBoolean("skip", false)
+                sharedPreferences.edit().remove("access_token").apply()
+            }
+        }
     }
 }
 

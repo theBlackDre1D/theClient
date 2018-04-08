@@ -8,7 +8,6 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
-import java.util.*
 
 interface GitHubAPI {
     @GET("user")
@@ -24,7 +23,7 @@ interface GitHubAPI {
     fun getRepoContent(@Path("name") name: String, @Path("repo") repo: String, @Query("access_token") accessToken: String): Call<List<GitHubRepoContent>>
 
     @GET("repos/{name}/{repo}/pulls")
-    fun getRepoPulls(@Path("name") name: String, @Path("repo") repo: String, @Query("access_token") accessToken: String): Call<List<GitHubPullRequests>>
+    fun getRepoPulls(@Path("name") name: String, @Path("repo") repo: String, @Query("access_token") accessToken: String): Call<List<GitHubPullRequest>>
 
     companion object Factory {
         fun create(): GitHubAPI {

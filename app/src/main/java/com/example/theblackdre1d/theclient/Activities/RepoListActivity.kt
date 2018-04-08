@@ -80,18 +80,20 @@ class RepoListActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
         alert("Do you wanna log off?") {
             title = "Log off"
             yesButton {
                 Prefs.putBoolean("skip", false)
                 val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
                 sharedPreferences.edit().remove("access_token").apply()
+                super.onBackPressed()
             }
             noButton {
                 toast("Nothing happened.")
             }
-        }
+        }.show()
+        Prefs.putBoolean("skip", false)
+
     }
 }
 

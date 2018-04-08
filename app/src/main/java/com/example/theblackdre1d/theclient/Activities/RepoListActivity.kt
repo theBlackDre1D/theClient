@@ -24,10 +24,11 @@ import com.squareup.picasso.Picasso
 import khttp.get
 import kotlinx.android.synthetic.main.activity_repo_list.*
 import org.jetbrains.anko.alert
+import org.jetbrains.anko.noButton
+import org.jetbrains.anko.toast
 import org.jetbrains.anko.yesButton
 
 class RepoListActivity : AppCompatActivity() {
-    val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +42,7 @@ class RepoListActivity : AppCompatActivity() {
         repositoriesTable.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
         val repositoriesList = ArrayList<Repository>()
         // Shared preferences initialization
+        val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
         val userToken: String? = sharedPreferences.getString("access_token",null)
         Log.i("TOKEN", userToken)
 
@@ -83,7 +85,11 @@ class RepoListActivity : AppCompatActivity() {
             title = "Log off"
             yesButton {
                 Prefs.putBoolean("skip", false)
+                val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
                 sharedPreferences.edit().remove("access_token").apply()
+            }
+            noButton {
+                toast("Nothing happened.")
             }
         }
     }

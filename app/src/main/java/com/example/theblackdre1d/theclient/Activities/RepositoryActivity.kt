@@ -1,6 +1,7 @@
 package com.example.theblackdre1d.theclient.Activities
 
 import android.app.Fragment
+import android.content.Context
 import android.support.design.widget.TabLayout
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -38,10 +39,12 @@ class RepositoryActivity : AppCompatActivity() {
     }
 
     private fun setupViewPager(viewPager: ViewPager) {
+        val settings = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
+        val token = settings?.getString("access_token", null)
         val adapter = ViewPagerAdapater(supportFragmentManager)
         adapter.addFragment(CommitsFragment(author, repoName), "Commits")
         adapter.addFragment(ReadmeFragment(author, repoName), "README")
-        adapter.addFragment(CodeFragment(author, repoName, Token.getToken()), "Codes")
+        adapter.addFragment(CodeFragment(author, repoName, token!!), "Codes")
         adapter.addFragment(PullRequestsFragment(author, repoName), "Pull Requests")
         viewPager.adapter = adapter
     }

@@ -17,7 +17,6 @@ import com.example.theblackdre1d.theclient.Adapters.RepoListAdapter
 import com.example.theblackdre1d.theclient.Interfaces.GitHubAPI
 import com.example.theblackdre1d.theclient.Models.GitHubRepository
 import com.example.theblackdre1d.theclient.Models.Repository
-import com.example.theblackdre1d.theclient.Models.User
 import com.example.theblackdre1d.theclient.R
 import com.pixplicity.easyprefs.library.Prefs
 import com.squareup.picasso.Picasso
@@ -44,7 +43,7 @@ class RepoListActivity : AppCompatActivity() {
         // Shared preferences initialization
         val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
         val userToken: String? = sharedPreferences.getString("access_token",null)
-        Log.i("TOKEN", userToken)
+        //Log.i("TOKEN", userToken)
 
 
         // ==== Obtaining information from GitHub ====
@@ -58,7 +57,6 @@ class RepoListActivity : AppCompatActivity() {
 
         // ==== Obtain user repos ===
         val gitHubUserRepos = GetUserRepos(userToken).execute().get()
-//        gitHubUserRepos?.let {
         if (gitHubUserRepos != null) {
             for (repo in gitHubUserRepos) {
                 var description: String
@@ -73,7 +71,6 @@ class RepoListActivity : AppCompatActivity() {
                 repositoriesList.add(repository)
             }
         }
-//        }
         // ==== Creating table ====
         val repositoriesAdapter = RepoListAdapter(repositoriesList)
         repositoriesTable.adapter = repositoriesAdapter

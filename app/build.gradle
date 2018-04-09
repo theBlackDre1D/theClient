@@ -32,7 +32,7 @@ dependencies {
     androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.1', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile "com.android.support:support-core-utils:27.1.1"
+    implementation "com.android.support:support-core-utils:27.1.1"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     implementation "org.jetbrains.anko:anko:$anko_version"
     implementation 'de.hdodenhof:circleimageview:2.2.0'
@@ -64,4 +64,6 @@ dependencies {
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.github.tiagohm.MarkdownView:library:0.19.0'
     implementation 'com.pixplicity.easyprefs:library:1.9.0'
+    // Notifications
+    implementation "com.android.support:support-compat:27.1.1"
 }

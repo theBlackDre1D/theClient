@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Typeface
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
@@ -16,6 +17,8 @@ import com.example.theblackdre1d.theclient.Token
 import com.pixplicity.easyprefs.library.Prefs
 import kotlinx.android.synthetic.main.activity_main.*
 import khttp.post
+import org.jetbrains.anko.alert
+import org.jetbrains.anko.yesButton
 
 class MainActivity : AppCompatActivity() {
     var clientID = Token.clientID
@@ -44,8 +47,18 @@ class MainActivity : AppCompatActivity() {
         theClientText.typeface = font
 
         logInButton.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/login/oauth/authorize?client_id=${clientID}&scope=repo&redirect_uri=${redirectURI}"))
-            startActivity(intent)
+            // TODO Find if user is connected
+            val conectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val networkInfo = conectivityManager.activeNetworkInfo
+            networkInfo?.let {
+                if (networkInfo.isConnected) {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/login/oauth/authorize?client_id=${clientID}&scope=repo&redirect_uri=${redirectURI}"))
+                    startActivity(intent)
+                }
+            }
+            alert("You have to be connected to proceed") {
+                yesButton {  }
+            }.show()
         }
     }
 

@@ -1,6 +1,5 @@
 package com.example.theblackdre1d.theclient.Activities
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.AsyncTask
@@ -8,8 +7,6 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
-import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -43,14 +40,12 @@ class RepoListActivity : AppCompatActivity() {
         // Shared preferences initialization
         val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
         val userToken: String? = sharedPreferences.getString("access_token",null)
-        //Log.i("TOKEN", userToken)
-
 
         // ==== Obtaining information from GitHub ====
         // Obtain user details
         // TODO: Token is null now
         val gitUserDetails = GetUserInfo(userToken).execute().get()
-        //TODO: Find why some atributes are null
+        // TODO: Find why some atributes are null
         userName.text = gitUserDetails["userName"] as String
         createdAt.text = gitUserDetails["createdAt"] as String
         Picasso.with(applicationContext).load(gitUserDetails["avatarURL"] as String).into(profilePicture)

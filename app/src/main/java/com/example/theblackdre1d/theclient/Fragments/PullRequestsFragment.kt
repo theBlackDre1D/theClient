@@ -25,7 +25,7 @@ class PullRequestsFragment(private val userName: String, val repoName: String): 
         val token = settings?.getString("access_token", null)
         if (token != null) {
             val pullsList = GetRepoPulls(userName, repoName, token).execute().get()
-            if (pullsList!!.size != 0) {
+            if (pullsList!!.isNotEmpty()) { // TODO Debug if this will work
                 val table = rootView.pullsRecyclerView as RecyclerView
                 val content = container!!.context
                 table.layoutManager = LinearLayoutManager(content, LinearLayout.VERTICAL, false)

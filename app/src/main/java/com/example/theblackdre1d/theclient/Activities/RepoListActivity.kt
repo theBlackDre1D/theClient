@@ -1,11 +1,14 @@
 package com.example.theblackdre1d.theclient.Activities
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
+import android.net.Uri
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.widget.ImageView
@@ -30,26 +33,77 @@ class RepoListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_repo_list)
-        Prefs.putBoolean("skip", false)
-        // UI objects
-        val profilePicture = circularImageView as ImageView
-        val userName = name as TextView
-        val repositoriesTable = RepositoryTable as RecyclerView
-        val createdAt = createdAtTextView as TextView
-        repositoriesTable.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
-        val repositoriesList = ArrayList<Repository>()
-        // Shared preferences initialization
-        val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
-        val userToken: String? = sharedPreferences.getString("access_token",null)
-
         val conectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = conectivityManager.activeNetworkInfo
         networkInfo?.let {
+//            Prefs.putBoolean("skip", false)
+//            // UI objects
+//            val profilePicture = circularImageView as ImageView
+//            val userName = name as TextView
+//            val repositoriesTable = RepositoryTable as RecyclerView
+//            val createdAt = createdAtTextView as TextView
+//            repositoriesTable.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
+//            val repositoriesList = ArrayList<Repository>()
+//            // Shared preferences initialization
+//            val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
+//            val userToken: String? = sharedPreferences.getString("access_token",null)
+//
+//            // ==== Obtaining information from GitHub ====
+//            // Obtain user details
+//            val gitUserDetails = GetUserInfo(userToken).execute().get()
+//            userName.text = gitUserDetails["userName"] as String
+//            createdAt.text = gitUserDetails["createdAt"] as String
+//            Picasso.with(applicationContext).load(gitUserDetails["avatarURL"] as String).into(profilePicture)
+//
+//            // ==== Obtain user repos ===
+//            val gitHubUserRepos = GetUserRepos(userToken).execute().get()
+//            if (gitHubUserRepos != null) {
+//                for (repo in gitHubUserRepos) {
+//                    var description: String
+//                    val nameOfRepo = repo.name
+//                    val language = repo.language
+//                    if (repo.description == null) {
+//                        description = "No description provided"
+//                    } else {
+//                        description = repo.description as String
+//                    }
+//                    val repository = Repository(nameOfRepo!!, description, language!!, gitUserDetails["userName"] as String)
+//                    repositoriesList.add(repository)
+//                }
+//            }
+//            // ==== Creating table ====
+//            val repositoriesAdapter = RepoListAdapter(repositoriesList)
+//            repositoriesTable.adapter = repositoriesAdapter
+        }
+        if (networkInfo == null) {
+            alert("You have to be connected to proceed") {
+                yesButton({
+                    redirectToSettings()
+                })
+            }.show()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val conectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = conectivityManager.activeNetworkInfo
+        networkInfo?.let {
+            Prefs.putBoolean("skip", false)
+            // UI objects
+            val profilePicture = circularImageView as ImageView
+            val userName = name as TextView
+            val repositoriesTable = RepositoryTable as RecyclerView
+            val createdAt = createdAtTextView as TextView
+            repositoriesTable.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
+            val repositoriesList = ArrayList<Repository>()
+            // Shared preferences initialization
+            val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
+            val userToken: String? = sharedPreferences.getString("access_token",null)
+
             // ==== Obtaining information from GitHub ====
             // Obtain user details
-            // TODO: Token is null now
             val gitUserDetails = GetUserInfo(userToken).execute().get()
-            // TODO: Find why some atributes are null
             userName.text = gitUserDetails["userName"] as String
             createdAt.text = gitUserDetails["createdAt"] as String
             Picasso.with(applicationContext).load(gitUserDetails["avatarURL"] as String).into(profilePicture)
@@ -74,6 +128,22 @@ class RepoListActivity : AppCompatActivity() {
             val repositoriesAdapter = RepoListAdapter(repositoriesList)
             repositoriesTable.adapter = repositoriesAdapter
         }
+
+        if (networkInfo == null) {
+            alert("You have to be connected to proceed") {
+                yesButton{
+                    redirectToSettings()
+                }
+            }.show()
+        }
+    }
+
+    private fun redirectToSettings() {
+        val intent = Intent(Settings.ACTION_WIRELESS_SETTINGS)
+//        intent.action =
+//        val uri = Uri.fromParts("package", packageResourcePath, null)
+//        intent.data = uri
+        startActivity(intent)
     }
 
     override fun onBackPressed() {

@@ -10,6 +10,7 @@ import android.net.Uri
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import com.example.theblackdre1d.theclient.Java.VideoViewOnPrepared
 import com.example.theblackdre1d.theclient.R
@@ -18,6 +19,7 @@ import com.pixplicity.easyprefs.library.Prefs
 import kotlinx.android.synthetic.main.activity_main.*
 import khttp.post
 import org.jetbrains.anko.alert
+import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.yesButton
 
 class MainActivity : AppCompatActivity() {
@@ -57,7 +59,13 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             alert("You have to be connected to proceed") {
-                yesButton {  }
+                yesButton {
+                    val intent = Intent()
+                    intent.action = Settings.ACTION_SETTINGS
+                    val uri = Uri.fromParts("package", packageResourcePath, null)
+                    intent.data = uri
+                    startActivityForResult(intent, 0)
+                }
             }.show()
         }
     }

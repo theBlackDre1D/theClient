@@ -29,8 +29,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
-        val token: String? = sharedPreferences.getString("access_token",null)
+//        val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
+//        val token: String? = sharedPreferences.getString("access_token",null)
 
         Prefs.Builder()
                 .setContext(this)
@@ -39,10 +39,10 @@ class MainActivity : AppCompatActivity() {
                 .setUseDefaultSharedPreference(true)
                 .build()
 
-        if (token != null) {
-            val intent = Intent(this, RepoListActivity::class.java)
-            startActivity(intent)
-        }
+//        if (token != null) {
+//            val intent = Intent(this, RepoListActivity::class.java)
+//            startActivity(intent)
+//        }
 
         //Setting up font
         val font: Typeface = Typeface.createFromAsset(assets,"fonts/Atlantic Bentley.ttf")
@@ -72,7 +72,17 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("CommitPrefEdits")
    override fun onResume() {
+        val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
+        val token: String? = sharedPreferences.getString("access_token",null)
+        token?.let {
+            val intent = Intent(this, RepoListActivity::class.java)
+            startActivity(intent)
+        }
         super.onResume()
+
+        if (token != null) {
+
+        }
         //Setting up looping background video
         val uri: Uri = Uri.parse("android.resource://"+packageName+"/"+ R.raw.backgorund_movie)
         backgroundVideo.setVideoURI(uri)

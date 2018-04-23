@@ -4,11 +4,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
-import android.net.Uri
 import android.os.AsyncTask
+import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
+import android.support.annotation.RequiresApi
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.widget.ImageView
@@ -24,8 +25,6 @@ import com.squareup.picasso.Picasso
 import khttp.get
 import kotlinx.android.synthetic.main.activity_repo_list.*
 import org.jetbrains.anko.alert
-import org.jetbrains.anko.noButton
-import org.jetbrains.anko.toast
 import org.jetbrains.anko.yesButton
 
 class RepoListActivity : AppCompatActivity() {
@@ -35,46 +34,9 @@ class RepoListActivity : AppCompatActivity() {
         setContentView(R.layout.activity_repo_list)
         val conectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = conectivityManager.activeNetworkInfo
-        networkInfo?.let {
-//            Prefs.putBoolean("skip", false)
-//            // UI objects
-//            val profilePicture = circularImageView as ImageView
-//            val userName = name as TextView
-//            val repositoriesTable = RepositoryTable as RecyclerView
-//            val createdAt = createdAtTextView as TextView
-//            repositoriesTable.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
-//            val repositoriesList = ArrayList<Repository>()
-//            // Shared preferences initialization
-//            val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
-//            val userToken: String? = sharedPreferences.getString("access_token",null)
+//        networkInfo?.let {
 //
-//            // ==== Obtaining information from GitHub ====
-//            // Obtain user details
-//            val gitUserDetails = GetUserInfo(userToken).execute().get()
-//            userName.text = gitUserDetails["userName"] as String
-//            createdAt.text = gitUserDetails["createdAt"] as String
-//            Picasso.with(applicationContext).load(gitUserDetails["avatarURL"] as String).into(profilePicture)
-//
-//            // ==== Obtain user repos ===
-//            val gitHubUserRepos = GetUserRepos(userToken).execute().get()
-//            if (gitHubUserRepos != null) {
-//                for (repo in gitHubUserRepos) {
-//                    var description: String
-//                    val nameOfRepo = repo.name
-//                    val language = repo.language
-//                    if (repo.description == null) {
-//                        description = "No description provided"
-//                    } else {
-//                        description = repo.description as String
-//                    }
-//                    val repository = Repository(nameOfRepo!!, description, language!!, gitUserDetails["userName"] as String)
-//                    repositoriesList.add(repository)
-//                }
-//            }
-//            // ==== Creating table ====
-//            val repositoriesAdapter = RepoListAdapter(repositoriesList)
-//            repositoriesTable.adapter = repositoriesAdapter
-        }
+//        }
         if (networkInfo == null) {
             alert("You have to be connected to proceed") {
                 yesButton({
@@ -140,26 +102,25 @@ class RepoListActivity : AppCompatActivity() {
 
     private fun redirectToSettings() {
         val intent = Intent(Settings.ACTION_WIRELESS_SETTINGS)
-//        intent.action =
-//        val uri = Uri.fromParts("package", packageResourcePath, null)
-//        intent.data = uri
         startActivity(intent)
     }
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onBackPressed() {
-        alert("Do you wanna log off?") {
-            title = "Log off"
-            yesButton {
-                Prefs.putBoolean("skip", false)
-                val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
-                sharedPreferences.edit().remove("access_token").apply()
-                super.onBackPressed()
-            }
-            noButton {
-                toast("Nothing happened.")
-            }
-        }.show()
-        Prefs.putBoolean("skip", false)
+        moveTaskToBack(true)
+//        alert("Do you wanna log off?") {
+//            title = "Log off"
+//            yesButton {
+//                Prefs.putBoolean("skip", false)
+//                val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
+//                sharedPreferences.edit().remove("access_token").apply()
+//                super.onBackPressed()
+//            }
+//            noButton {
+//                toast("Nothing happened.")
+//            }
+//        }.show()
+//        Prefs.putBoolean("skip", false)
     }
 }
 

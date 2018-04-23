@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.theblackdre1d.theclient">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -15,7 +16,6 @@
         <activity android:name=".Activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
@@ -34,14 +34,12 @@
             android:name=".Activities.RepositoryActivity"
             android:label="@string/title_activity_repository"
             android:theme="@style/AppTheme" />
-        <activity
-            android:name=".Activities.RepositoryActivity"
-            android:label="@string/title_activity_repository"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".Activities.RepositoryActivity"
-            android:label="@string/title_activity_repository"
-            android:theme="@style/AppTheme"></activity>
+        <!--<activity-->
+            <!--android:name=".Activities.RepositoryActivity"-->
+            <!--android:label="@string/title_activity_repository"-->
+            <!--android:theme="@style/AppTheme"-->
+            <!--tools:ignore="DuplicateActivity" />-->
+
     </application>
 
 </manifest>

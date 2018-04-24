@@ -36,12 +36,6 @@ class CommitsFragment(val userName: String, val repositoryName: String) : Fragme
         //val repositoryName: String = repositoryName
         val commitsList = GetReposCommits(token!!, userName, repositoryName).execute().get()
         val syncPreferencies = activity?.getSharedPreferences("sync", Context.MODE_PRIVATE)
-        syncPreferencies?.edit()?.apply {
-            val gson = Gson()
-            val jsonCommit = gson.toJson(commitsList.last())
-            putString("lastCommit", jsonCommit)
-            apply()
-        }
 
         val table = rootView.commitsRecyclerView as RecyclerView
         val context = container!!.context

@@ -19,13 +19,14 @@ import kotlinx.android.synthetic.main.pull_requests_fragment.view.*
 
 @SuppressLint("ValidFragment")
 class PullRequestsFragment(private val userName: String, val repoName: String): Fragment() {
+    @SuppressLint("CommitPrefEdits")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.pull_requests_fragment, container, false)
         val settings = this.activity?.getSharedPreferences("access_token", Context.MODE_PRIVATE)
         val token = settings?.getString("access_token", null)
         if (token != null) {
             val pullsList = GetRepoPulls(userName, repoName, token).execute().get()
-            if (pullsList!!.isNotEmpty()) { // TODO Debug if this will work
+            if (pullsList!!.isNotEmpty()) {
                 val table = rootView.pullsRecyclerView as RecyclerView
                 val content = container!!.context
                 table.layoutManager = LinearLayoutManager(content, LinearLayout.VERTICAL, false)

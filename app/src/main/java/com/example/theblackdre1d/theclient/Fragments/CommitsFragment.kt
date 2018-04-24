@@ -18,11 +18,14 @@ import com.example.theblackdre1d.theclient.Interfaces.GitHubAPI
 import com.example.theblackdre1d.theclient.Models.GitHubCommit
 import com.example.theblackdre1d.theclient.R
 import com.example.theblackdre1d.theclient.Token
+import com.google.gson.Gson
+import com.pixplicity.easyprefs.library.Prefs
 import kotlinx.android.synthetic.main.commits_fragment.view.*
 
 @SuppressLint("ValidFragment")
 class CommitsFragment(val userName: String, val repositoryName: String) : Fragment() {
 
+    @SuppressLint("CommitPrefEdits")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
 //        val token = Token.getToken()
@@ -32,6 +35,14 @@ class CommitsFragment(val userName: String, val repositoryName: String) : Fragme
         //val userName: String = userName
         //val repositoryName: String = repositoryName
         val commitsList = GetReposCommits(token!!, userName, repositoryName).execute().get()
+        val syncPreferencies = activity?.getSharedPreferences("sync", Context.MODE_PRIVATE)
+        syncPreferencies?.edit()?.apply {
+            val gson = Gson()
+            val jsonCommit = gson.toJson(commitsList.last())
+            putString("lastCommit", jsonCommit)
+            apply()
+        }
+
         val table = rootView.commitsRecyclerView as RecyclerView
         val context = container!!.context
         table.layoutManager = LinearLayoutManager(context, LinearLayout.VERTICAL, false)

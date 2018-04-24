@@ -1,5 +1,6 @@
 package com.example.theblackdre1d.theclient.Activities
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -20,6 +21,7 @@ import com.example.theblackdre1d.theclient.Interfaces.GitHubAPI
 import com.example.theblackdre1d.theclient.Models.GitHubRepository
 import com.example.theblackdre1d.theclient.Models.Repository
 import com.example.theblackdre1d.theclient.R
+import com.google.gson.Gson
 import com.pixplicity.easyprefs.library.Prefs
 import com.squareup.picasso.Picasso
 import khttp.get
@@ -46,6 +48,7 @@ class RepoListActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("CommitPrefEdits")
     override fun onResume() {
         super.onResume()
         val conectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -62,10 +65,12 @@ class RepoListActivity : AppCompatActivity() {
             // Shared preferences initialization
             val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
             val userToken: String? = sharedPreferences.getString("access_token",null)
-
+            val syncPreferencies = application.getSharedPreferences("sync", Context.MODE_PRIVATE)
+            val prefsEditor = syncPreferencies.edit()
             // ==== Obtaining information from GitHub ====
             // Obtain user details
             val gitUserDetails = GetUserInfo(userToken).execute().get()
+
             userName.text = gitUserDetails["userName"] as String
             createdAt.text = gitUserDetails["createdAt"] as String
             Picasso.with(applicationContext).load(gitUserDetails["avatarURL"] as String).into(profilePicture)
@@ -86,6 +91,16 @@ class RepoListActivity : AppCompatActivity() {
                     repositoriesList.add(repository)
                 }
             }
+
+            // Saving information for sync purpose
+            gitHubUserRepos?.forEach { repo ->
+                val gson = Gson()
+                val jsonRepo = gson.toJson(repo)
+                prefsEditor.putString(repo.name, jsonRepo)
+                prefsEditor.apply()
+            }
+            prefsEditor.putString("userName", gitUserDetails["userName"] as String)
+            prefsEditor.apply()
             // ==== Creating table ====
             val repositoriesAdapter = RepoListAdapter(repositoriesList)
             repositoriesTable.adapter = repositoriesAdapter
@@ -128,7 +143,6 @@ class RepoListActivity : AppCompatActivity() {
 
 // AsyncTask class -> better to declare it in separate file
 class GetUserRepos(private val userToken: String?): AsyncTask<Unit, Unit, List<GitHubRepository>?>() {
-
     override fun doInBackground(vararg params: Unit?): List<GitHubRepository>? {
         val gitHubService = GitHubAPI.create()
         val gitRespond = gitHubService.getUserRepos(userToken!!).execute().body()

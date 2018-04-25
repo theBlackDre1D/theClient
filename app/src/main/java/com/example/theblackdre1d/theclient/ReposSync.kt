@@ -25,39 +25,37 @@ class ReposSync : JobService() {
 
     private fun checkNewPullRequests() {
         Log.i("SYNC", "Syncing pull requests")
-
-//        val syncPreferencies = application.getSharedPreferences("sync", Context.MODE_PRIVATE)
         val settings = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
         val token = settings?.getString("access_token", null)
         token?.let {
             val userRepos = GetUserRepos(token).execute().get()
             var savedRepositories: ArrayList<SavedRepository> = ArrayList()
-            var loopCondition = true
             var count = 0
-            while(loopCondition) {
-                val savedRepoInJson = Prefs.getString("${userRepos!![count].name}", null)
+            while(count < userRepos!!.size) {
+                val repoName = userRepos[count].name
+                val savedRepoInJson = Prefs.getString("${userRepos[count].name}", null)
                 if (savedRepoInJson != null) {
                     val gson = Gson()
                     val savedRepo = gson.fromJson<SavedRepository>(savedRepoInJson, SavedRepository::class.java)
                     savedRepositories.add(savedRepo)
                     count++
-                } else {
-                    loopCondition = false
                 }
             }
-            val syncPreferences = application.getSharedPreferences("sync", Context.MODE_PRIVATE)
-            val userName: String? = syncPreferences.getString("userName", null)
-            userRepos?.forEach { repo ->
+            //val syncPreferences = application.getSharedPreferences("sync", Context.MODE_PRIVATE)
+            val userName = Prefs.getString("userName", null)
+            userRepos.forEach { repo ->
+                //TODO FInd why ap crash here
                 val pullRequests = GetRepoPulls(userName!!, repo.name!!, token).execute().get()
-                var savedRepo: SavedRepository? = null
-                savedRepositories.forEach { savedRepository ->
-                    if (repo.name == savedRepository.repositoryName) {
-                        savedRepo = savedRepository
+                if (pullRequests!!.isNotEmpty()) {
+                    var savedRepo: SavedRepository? = null
+                    savedRepositories.forEach { savedRepository ->
+                        if (repo.name == savedRepository.repositoryName) {
+                            savedRepo = savedRepository
+                        }
                     }
-                }
-                pullRequests?.let {
                     if (pullRequests.last() != savedRepo?.lastPullRequest) {
                         //TODO Create notification
+                        Log.i("NOTIFICATION", "creating notifications")
                     }
                 }
             }

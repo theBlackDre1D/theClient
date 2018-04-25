@@ -22,10 +22,7 @@ import com.example.theblackdre1d.theclient.Adapters.RepoListAdapter
 import com.example.theblackdre1d.theclient.Fragments.GetRepoPulls
 import com.example.theblackdre1d.theclient.Fragments.GetReposCommits
 import com.example.theblackdre1d.theclient.Interfaces.GitHubAPI
-import com.example.theblackdre1d.theclient.Models.GitHubPullRequest
-import com.example.theblackdre1d.theclient.Models.GitHubRepository
-import com.example.theblackdre1d.theclient.Models.Repository
-import com.example.theblackdre1d.theclient.Models.SavedRepository
+import com.example.theblackdre1d.theclient.Models.*
 import com.example.theblackdre1d.theclient.R
 import com.example.theblackdre1d.theclient.R.id.testButton
 import com.google.gson.Gson
@@ -103,18 +100,6 @@ class RepoListActivity : AppCompatActivity() {
                     saveInformationForSync(gitHubUserRepos, userToken!!)
                 }
             }
-
-            // Saving information for sync purpose
-
-//            gitHubUserRepos?.forEach { repo ->
-//                val savingRepo = SavedRepository(null, null, repo.name, repo.owner!!.login)
-//                val gson = Gson()
-//                val jsonRepo = gson.toJson(savingRepo)
-//                prefsEditor.putString(repo.name, jsonRepo)
-//                prefsEditor.apply()
-//            }
-//            prefsEditor.putString("userName", gitUserDetails["userName"] as String)
-//            prefsEditor.apply()
             // ==== Creating table ====
             val repositoriesAdapter = RepoListAdapter(repositoriesList)
             repositoriesTable.adapter = repositoriesAdapter
@@ -130,40 +115,7 @@ class RepoListActivity : AppCompatActivity() {
 
         val testButton = testButton as Button
         testButton.setOnClickListener {
-            val settings = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
-            val token = settings?.getString("access_token", null)
-            token?.let {
-                val userRepos = GetUserRepos(token).execute().get()
-                var savedRepositories: ArrayList<SavedRepository> = ArrayList()
-                var count = 0
-                while(count < userRepos!!.size) {
-                    val repoName = userRepos[count].name
-                    val savedRepoInJson = Prefs.getString("${userRepos[count].name}", null)
-                    if (savedRepoInJson != null) {
-                        val gson = Gson()
-                        val savedRepo = gson.fromJson<SavedRepository>(savedRepoInJson, SavedRepository::class.java)
-                        savedRepositories.add(savedRepo)
-                        count++
-                    }
-                }
-                //val syncPreferences = application.getSharedPreferences("sync", Context.MODE_PRIVATE)
-                val userName = Prefs.getString("userName", null)
-                userRepos.forEach { repo ->
-                    //TODO FInd why ap crash here
-                    val pullRequests = GetRepoPulls(userName!!, repo.name!!, token).execute().get()
-                    var savedRepo: SavedRepository? = null
-                    savedRepositories.forEach { savedRepository ->
-                        if (repo.name == savedRepository.repositoryName) {
-                            savedRepo = savedRepository
-                        }
-                    }
-                    if (pullRequests!!.isNotEmpty()) {
-                        if (pullRequests.last() != savedRepo?.lastPullRequest) {
-                            //TODO Create notification
-                        }
-                    }
-                }
-            }
+            
         }
     }
 
@@ -175,14 +127,18 @@ class RepoListActivity : AppCompatActivity() {
 
         repositories.forEach { repo ->
             val commits = GetReposCommits(token, userName, repo.name!!).execute().get()//gitHubService.getRepoCommits(Prefs.getString("userName", null), repo.name!!, token).execute().body()
-            val commitsCount = commits.size
+            //val commitsCount = commits.size
             val pullRequests = GetRepoPulls(userName, repo.name, token).execute().get()
             var lastPull: GitHubPullRequest? = null
-            if (pullRequests?.size!! > 0) {
+            if (pullRequests?.isNotEmpty()!!) {
                 lastPull = pullRequests.last()
             }
+            var lastCommit: GitHubCommit? = null
+            if (commits.isNotEmpty()) {
+                lastCommit = commits.last()
+            }
             val savingRepo = SavedRepository(
-                    commitsCount,
+                    lastCommit,
                     lastPull,
                     repo.name,
                     userName)

@@ -115,7 +115,41 @@ class RepoListActivity : AppCompatActivity() {
 
         val testButton = testButton as Button
         testButton.setOnClickListener {
-            
+            val settings = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
+            val token = settings?.getString("access_token", null)
+            token?.let {
+                val userRepos = GetUserRepos(token).execute().get()
+                var savedRepositories: ArrayList<SavedRepository> = ArrayList()
+                var count = 0
+                while(count < userRepos!!.size) {
+                    val repoName = userRepos[count].name //only for debug purposes
+                    val savedRepoInJson = Prefs.getString("${userRepos[count].name}", null)
+                    if (savedRepoInJson != null) {
+                        val gson = Gson()
+                        val savedRepo = gson.fromJson<SavedRepository>(savedRepoInJson, SavedRepository::class.java)
+                        savedRepositories.add(savedRepo)
+                        count++
+                    }
+                }
+                val userName = Prefs.getString("userName", null)
+                userRepos.forEach { repo ->
+                    val repoCommits = GetReposCommits(token, userName, repo.name!!).execute().get()
+                    if (repoCommits.isNotEmpty()) {
+                        var savedRepo: SavedRepository? = null
+                        savedRepositories.forEach { savedRepository ->
+                            if (repo.name == savedRepository.repositoryName) {
+                                savedRepo = savedRepository
+                            }
+                        }
+                        val pontentionalyNewCommit = repoCommits.first().commit?.message
+                        val currentLastCommit = savedRepo?.lastCommit?.commit?.message
+                        if (repoCommits.first() != savedRepo?.lastCommit) {
+                            Log.i("COMMITS", "creating notifications")
+                            //TODO: create notification
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -135,7 +169,7 @@ class RepoListActivity : AppCompatActivity() {
             }
             var lastCommit: GitHubCommit? = null
             if (commits.isNotEmpty()) {
-                lastCommit = commits.last()
+                lastCommit = commits.first() // first commit is last commit from time perspective
             }
             val savingRepo = SavedRepository(
                     lastCommit,

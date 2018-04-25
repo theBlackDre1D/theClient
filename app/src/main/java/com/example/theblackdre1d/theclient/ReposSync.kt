@@ -8,6 +8,7 @@ import android.support.annotation.RequiresApi
 import android.util.Log
 import com.example.theblackdre1d.theclient.Activities.GetUserRepos
 import com.example.theblackdre1d.theclient.Fragments.GetRepoPulls
+import com.example.theblackdre1d.theclient.Fragments.GetReposCommits
 import com.example.theblackdre1d.theclient.Interfaces.GitHubAPI
 import com.example.theblackdre1d.theclient.Models.GitHubRepository
 import com.example.theblackdre1d.theclient.Models.SavedRepository
@@ -55,7 +56,7 @@ class ReposSync : JobService() {
                     }
                     if (pullRequests.last() != savedRepo?.lastPullRequest) {
                         //TODO Create notification
-                        Log.i("NOTIFICATION", "creating notifications")
+                        Log.i("PULLS", "creating notifications")
                     }
                 }
             }
@@ -64,7 +65,41 @@ class ReposSync : JobService() {
 
     private fun checkNewCommits() {
         Log.i("SYNC", "Syncing commits")
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val settings = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
+        val token = settings?.getString("access_token", null)
+        token?.let {
+            val userRepos = GetUserRepos(token).execute().get()
+            var savedRepositories: ArrayList<SavedRepository> = ArrayList()
+            var count = 0
+            while(count < userRepos!!.size) {
+                val repoName = userRepos[count].name //only for debug purposes
+                val savedRepoInJson = Prefs.getString("${userRepos[count].name}", null)
+                if (savedRepoInJson != null) {
+                    val gson = Gson()
+                    val savedRepo = gson.fromJson<SavedRepository>(savedRepoInJson, SavedRepository::class.java)
+                    savedRepositories.add(savedRepo)
+                    count++
+                }
+            }
+            val userName = Prefs.getString("userName", null)
+            userRepos.forEach { repo ->
+                val repoCommits = GetReposCommits(token, userName, repo.name!!).execute().get()
+                if (repoCommits.isNotEmpty()) {
+                    var savedRepo: SavedRepository? = null
+                    savedRepositories.forEach { savedRepository ->
+                        if (repo.name == savedRepository.repositoryName) {
+                            savedRepo = savedRepository
+                        }
+                    }
+                    val pontentionalyNewCommit = repoCommits.first().commit?.message
+                    val currentLastCommit = savedRepo?.lastCommit?.commit?.message
+                    if (repoCommits.first() != savedRepo?.lastCommit) {
+                        Log.i("COMMITS", "creating notifications")
+                        //TODO: create notification
+                    }
+                }
+            }
+        }
     }
 
     override fun onStartJob(params: JobParameters?): Boolean {

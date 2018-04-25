@@ -146,9 +146,9 @@ class RepoListActivity : AppCompatActivity() {
                         count++
                     }
                 }
-                val syncPreferences = application.getSharedPreferences("sync", Context.MODE_PRIVATE)
-                val userName: String? = syncPreferences.getString("userName", null)
-                userRepos?.forEach { repo ->
+                //val syncPreferences = application.getSharedPreferences("sync", Context.MODE_PRIVATE)
+                val userName = Prefs.getString("userName", null)
+                userRepos.forEach { repo ->
                     //TODO FInd why ap crash here
                     val pullRequests = GetRepoPulls(userName!!, repo.name!!, token).execute().get()
                     var savedRepo: SavedRepository? = null
@@ -157,7 +157,7 @@ class RepoListActivity : AppCompatActivity() {
                             savedRepo = savedRepository
                         }
                     }
-                    pullRequests?.let {
+                    if (pullRequests!!.isNotEmpty()) {
                         if (pullRequests.last() != savedRepo?.lastPullRequest) {
                             //TODO Create notification
                         }

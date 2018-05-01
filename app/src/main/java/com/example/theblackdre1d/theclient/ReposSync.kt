@@ -29,10 +29,7 @@ import com.pixplicity.easyprefs.library.Prefs
 class ReposSync : JobService() {
 
     override fun onStopJob(params: JobParameters?): Boolean {
-        Log.i("SYNC", "Started background sync")
-        checkNewCommits()
-        checkNewPullRequests()
-        jobFinished(params, false)
+        Log.i("CANCELED", "Job was canceled before finish")
         return true
     }
 
@@ -159,7 +156,10 @@ class ReposSync : JobService() {
     }
 
     override fun onStartJob(params: JobParameters?): Boolean {
-        Log.i("CANCELED", "Job was canceled before finish")
+        Log.i("SYNC", "Started background sync")
+        checkNewCommits()
+        checkNewPullRequests()
+        jobFinished(params, false)
         return true
     }
 }

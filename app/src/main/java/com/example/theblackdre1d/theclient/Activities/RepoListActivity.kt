@@ -40,9 +40,7 @@ import com.pixplicity.easyprefs.library.Prefs
 import com.squareup.picasso.Picasso
 import khttp.get
 import kotlinx.android.synthetic.main.activity_repo_list.*
-import org.jetbrains.anko.alert
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.yesButton
+import org.jetbrains.anko.*
 import java.util.*
 
 class RepoListActivity : AppCompatActivity() {
@@ -62,7 +60,9 @@ class RepoListActivity : AppCompatActivity() {
             }.show()
         }
 
-        schedlueSync()
+        doAsync {
+            schedlueSync()
+        }
     }
 
     @SuppressLint("CommitPrefEdits")
@@ -124,10 +124,10 @@ class RepoListActivity : AppCompatActivity() {
             }.show()
         }
 
-        val testButton = testButton as Button
-        testButton.setOnClickListener {
-            createNotification("test title", "test text")
-        }
+//        val testButton = testButton as Button
+//        testButton.setOnClickListener {
+//            createNotification("test title", "test text")
+//        }
     }
 
     @SuppressLint("PrivateResource")
@@ -202,19 +202,6 @@ class RepoListActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onBackPressed() {
         moveTaskToBack(true)
-//        alert("Do you wanna log off?") {
-//            title = "Log off"
-//            yesButton {
-//                Prefs.putBoolean("skip", false)
-//                val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
-//                sharedPreferences.edit().remove("access_token").apply()
-//                super.onBackPressed()
-//            }
-//            noButton {
-//                toast("Nothing happened.")
-//            }
-//        }.show()
-//        Prefs.putBoolean("skip", false)
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -232,15 +219,23 @@ class RepoListActivity : AppCompatActivity() {
         } else {
             Log.i("NOT SUCCESS", "Job scheduling failed")
         }
-
     }
 
-//    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-//    fun cancelJob () {
-//        val scheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
-//        scheduler.cancel(123)
-//        Log.i("SUCCESS", "Job canceled")
-//    }
+    fun logOut(view: View) {
+        alert("Do you wanna log off?") {
+            title = "Log off"
+            yesButton {
+                Prefs.putBoolean("skip", false)
+                val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
+                sharedPreferences.edit().remove("access_token").apply()
+                super.onBackPressed()
+            }
+            noButton {
+                toast("Nothing happened.")
+            }
+        }.show()
+        Prefs.putBoolean("skip", false)
+    }
 }
 
 // =====================================================================================================================

@@ -5,6 +5,9 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.job.JobInfo
+import android.app.job.JobScheduler
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -19,6 +22,8 @@ import android.provider.Settings
 import android.support.annotation.RequiresApi
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -29,6 +34,7 @@ import com.example.theblackdre1d.theclient.Fragments.GetReposCommits
 import com.example.theblackdre1d.theclient.Interfaces.GitHubAPI
 import com.example.theblackdre1d.theclient.Models.*
 import com.example.theblackdre1d.theclient.R
+import com.example.theblackdre1d.theclient.ReposSync
 import com.google.gson.Gson
 import com.pixplicity.easyprefs.library.Prefs
 import com.squareup.picasso.Picasso
@@ -41,6 +47,7 @@ import java.util.*
 
 class RepoListActivity : AppCompatActivity() {
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_repo_list)
@@ -55,8 +62,7 @@ class RepoListActivity : AppCompatActivity() {
             }.show()
         }
 
-        val notificationTime = Calendar.getInstance().timeInMillis + 1000
-        val notified = false
+        schedlueSync()
     }
 
     @SuppressLint("CommitPrefEdits")
@@ -210,6 +216,31 @@ class RepoListActivity : AppCompatActivity() {
 //        }.show()
 //        Prefs.putBoolean("skip", false)
     }
+
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    fun schedlueSync() {
+        val componentName = ComponentName(this, ReposSync::class.java)
+        val info = JobInfo.Builder(123, componentName)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                .setPersisted(true)
+                .setPeriodic(15 * 60 * 1000)
+                .build()
+        val scheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+        val resultCode = scheduler.schedule(info)
+        if (resultCode == JobScheduler.RESULT_SUCCESS) {
+            Log.i("SUCCESS", "Job scheduled")
+        } else {
+            Log.i("NOT SUCCESS", "Job scheduling failed")
+        }
+
+    }
+
+//    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+//    fun cancelJob () {
+//        val scheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+//        scheduler.cancel(123)
+//        Log.i("SUCCESS", "Job canceled")
+//    }
 }
 
 // =====================================================================================================================

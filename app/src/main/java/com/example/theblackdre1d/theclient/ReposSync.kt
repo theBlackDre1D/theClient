@@ -27,9 +27,12 @@ import com.pixplicity.easyprefs.library.Prefs
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 class ReposSync : JobService() {
+
     override fun onStopJob(params: JobParameters?): Boolean {
+        Log.i("SYNC", "Started background sync")
         checkNewCommits()
         checkNewPullRequests()
+        jobFinished(params, false)
         return true
     }
 
@@ -156,6 +159,7 @@ class ReposSync : JobService() {
     }
 
     override fun onStartJob(params: JobParameters?): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        Log.i("CANCELED", "Job was canceled before finish")
+        return true
     }
 }

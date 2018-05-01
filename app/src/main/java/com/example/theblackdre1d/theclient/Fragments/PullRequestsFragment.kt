@@ -38,7 +38,6 @@ class PullRequestsFragment(private val userName: String, val repoName: String): 
                 rootView.pullsImageView.visibility = View.VISIBLE
             }
         }
-
         return rootView
     }
 }

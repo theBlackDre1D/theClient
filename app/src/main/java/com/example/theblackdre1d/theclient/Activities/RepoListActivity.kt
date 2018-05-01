@@ -1,9 +1,15 @@
 package com.example.theblackdre1d.theclient.Activities
 
 import android.annotation.SuppressLint
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.net.ConnectivityManager
 import android.os.AsyncTask
 import android.os.Build
@@ -13,7 +19,6 @@ import android.provider.Settings
 import android.support.annotation.RequiresApi
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -24,7 +29,6 @@ import com.example.theblackdre1d.theclient.Fragments.GetReposCommits
 import com.example.theblackdre1d.theclient.Interfaces.GitHubAPI
 import com.example.theblackdre1d.theclient.Models.*
 import com.example.theblackdre1d.theclient.R
-import com.example.theblackdre1d.theclient.R.id.testButton
 import com.google.gson.Gson
 import com.pixplicity.easyprefs.library.Prefs
 import com.squareup.picasso.Picasso
@@ -33,6 +37,7 @@ import kotlinx.android.synthetic.main.activity_repo_list.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.yesButton
+import java.util.*
 
 class RepoListActivity : AppCompatActivity() {
 
@@ -41,9 +46,6 @@ class RepoListActivity : AppCompatActivity() {
         setContentView(R.layout.activity_repo_list)
         val conectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = conectivityManager.activeNetworkInfo
-//        networkInfo?.let {
-//
-//        }
 
         if (networkInfo == null) {
             alert("You have to be connected to proceed") {
@@ -52,6 +54,9 @@ class RepoListActivity : AppCompatActivity() {
                 })
             }.show()
         }
+
+        val notificationTime = Calendar.getInstance().timeInMillis + 1000
+        val notified = false
     }
 
     @SuppressLint("CommitPrefEdits")
@@ -115,42 +120,44 @@ class RepoListActivity : AppCompatActivity() {
 
         val testButton = testButton as Button
         testButton.setOnClickListener {
-            val settings = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
-            val token = settings?.getString("access_token", null)
-            token?.let {
-                val userRepos = GetUserRepos(token).execute().get()
-                var savedRepositories: ArrayList<SavedRepository> = ArrayList()
-                var count = 0
-                while(count < userRepos!!.size) {
-                    val repoName = userRepos[count].name //only for debug purposes
-                    val savedRepoInJson = Prefs.getString("${userRepos[count].name}", null)
-                    if (savedRepoInJson != null) {
-                        val gson = Gson()
-                        val savedRepo = gson.fromJson<SavedRepository>(savedRepoInJson, SavedRepository::class.java)
-                        savedRepositories.add(savedRepo)
-                        count++
-                    }
-                }
-                val userName = Prefs.getString("userName", null)
-                userRepos.forEach { repo ->
-                    val repoCommits = GetReposCommits(token, userName, repo.name!!).execute().get()
-                    if (repoCommits.isNotEmpty()) {
-                        var savedRepo: SavedRepository? = null
-                        savedRepositories.forEach { savedRepository ->
-                            if (repo.name == savedRepository.repositoryName) {
-                                savedRepo = savedRepository
-                            }
-                        }
-                        val pontentionalyNewCommit = repoCommits.first().commit?.message
-                        val currentLastCommit = savedRepo?.lastCommit?.commit?.message
-                        if (repoCommits.first() != savedRepo?.lastCommit) {
-                            Log.i("COMMITS", "creating notifications")
-                            //TODO: create notification
-                        }
-                    }
-                }
-            }
+            createNotification("test title", "test text")
         }
+    }
+
+    @SuppressLint("PrivateResource")
+    private fun createNotification(title: String, text: String) {
+        val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationChannel: NotificationChannel
+        val builder: Notification.Builder
+        val channelID = "com.example.theblackdre1d.theclient"
+
+        val intent = Intent(this, RepoListActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationChannel = NotificationChannel(channelID, text, NotificationManager.IMPORTANCE_HIGH)
+            notificationChannel.enableLights(true)
+            notificationChannel.lightColor = Color.GREEN
+            notificationChannel.setShowBadge(true)
+            notificationChannel.enableVibration(true)
+            notificationChannel.setShowBadge(true)
+
+            notificationManager.createNotificationChannel(notificationChannel)
+
+            builder = Notification.Builder(this, channelID)
+                    .setContentTitle(title)
+                    .setContentText(text)
+                    .setSmallIcon(R.drawable.notification_icon_background)
+                    .setLargeIcon(BitmapFactory.decodeResource(this.resources, R.drawable.github))
+                    .setContentIntent(pendingIntent)
+        } else {
+            builder = Notification.Builder(this)
+                    .setContentTitle(title)
+                    .setContentText(text)
+                    .setSmallIcon(R.drawable.navigation_empty_icon)
+                    .setLargeIcon(BitmapFactory.decodeResource(this.resources, R.drawable.github))
+                    .setContentIntent(pendingIntent)
+        }
+        notificationManager.notify(1234, builder.build())
     }
 
     private fun saveInformationForSync(repositories: List<GitHubRepository>, token: String) {

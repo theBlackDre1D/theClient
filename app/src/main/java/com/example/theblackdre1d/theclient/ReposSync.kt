@@ -1,12 +1,21 @@
 package com.example.theblackdre1d.theclient
 
+import android.annotation.SuppressLint
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.job.JobParameters
 import android.app.job.JobService
 import android.content.Context
+import android.content.Intent
+import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.os.Build
 import android.support.annotation.RequiresApi
 import android.util.Log
 import com.example.theblackdre1d.theclient.Activities.GetUserRepos
+import com.example.theblackdre1d.theclient.Activities.RepoListActivity
 import com.example.theblackdre1d.theclient.Fragments.GetRepoPulls
 import com.example.theblackdre1d.theclient.Fragments.GetReposCommits
 import com.example.theblackdre1d.theclient.Interfaces.GitHubAPI
@@ -57,6 +66,10 @@ class ReposSync : JobService() {
                     if (pullRequests.last() != savedRepo?.lastPullRequest) {
                         //TODO Create notification
                         Log.i("PULLS", "creating notifications")
+                        createNotification(
+                                "New pull request in ${repo.name}",
+                                "You have new pull request in you repository!"
+                        )
                     }
                 }
             }
@@ -96,10 +109,50 @@ class ReposSync : JobService() {
                     if (repoCommits.first() != savedRepo?.lastCommit) {
                         Log.i("COMMITS", "creating notifications")
                         //TODO: create notification
+                        createNotification(
+                                "New commit/s in ${repo.name}",
+                                "You have new commit/s in your repository!"
+                        )
                     }
                 }
             }
         }
+    }
+
+    @SuppressLint("PrivateResource")
+    private fun createNotification(title: String, text: String) {
+        val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationChannel: NotificationChannel
+        val builder: Notification.Builder
+        val channelID = "com.example.theblackdre1d.theclient"
+
+        val intent = Intent(this, RepoListActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationChannel = NotificationChannel(channelID, text, NotificationManager.IMPORTANCE_HIGH)
+            notificationChannel.enableLights(true)
+            notificationChannel.lightColor = Color.GREEN
+            notificationChannel.setShowBadge(true)
+            notificationChannel.enableVibration(true)
+            notificationChannel.setShowBadge(true)
+
+            notificationManager.createNotificationChannel(notificationChannel)
+
+            builder = Notification.Builder(this, channelID)
+                    .setContentTitle(title)
+                    .setContentText(text)
+                    .setSmallIcon(R.drawable.notification_icon_background)
+                    .setLargeIcon(BitmapFactory.decodeResource(this.resources, R.drawable.github))
+                    .setContentIntent(pendingIntent)
+        } else {
+            builder = Notification.Builder(this)
+                    .setContentTitle(title)
+                    .setContentText(text)
+                    .setSmallIcon(R.drawable.navigation_empty_icon)
+                    .setLargeIcon(BitmapFactory.decodeResource(this.resources, R.drawable.github))
+                    .setContentIntent(pendingIntent)
+        }
+        notificationManager.notify(1234, builder.build())
     }
 
     override fun onStartJob(params: JobParameters?): Boolean {

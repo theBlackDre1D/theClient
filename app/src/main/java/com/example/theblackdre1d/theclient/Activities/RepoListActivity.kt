@@ -1,18 +1,12 @@
 package com.example.theblackdre1d.theclient.Activities
 
 import android.annotation.SuppressLint
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
 import android.app.job.JobInfo
 import android.app.job.JobScheduler
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.net.ConnectivityManager
 import android.os.AsyncTask
 import android.os.Build
@@ -24,7 +18,6 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -35,6 +28,7 @@ import com.example.theblackdre1d.theclient.Interfaces.GitHubAPI
 import com.example.theblackdre1d.theclient.Models.*
 import com.example.theblackdre1d.theclient.R
 import com.example.theblackdre1d.theclient.ReposSync
+import com.github.kittinunf.fuel.httpGet
 import com.google.gson.Gson
 import com.pixplicity.easyprefs.library.Prefs
 import com.squareup.picasso.Picasso
@@ -49,8 +43,8 @@ class RepoListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_repo_list)
-        val conectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val networkInfo = conectivityManager.activeNetworkInfo
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
 
         if (networkInfo == null) {
             alert("You have to be connected to proceed") {
@@ -61,15 +55,15 @@ class RepoListActivity : AppCompatActivity() {
         }
 
         doAsync {
-            schedlueSync()
+            scheduleSync()
         }
     }
 
     @SuppressLint("CommitPrefEdits")
     override fun onResume() {
         super.onResume()
-        val conectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val networkInfo = conectivityManager.activeNetworkInfo
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
         networkInfo?.let {
             Prefs.putBoolean("skip", false)
             // UI objects
@@ -87,11 +81,17 @@ class RepoListActivity : AppCompatActivity() {
             // ==== Obtaining information from GitHub ====
             // Obtain user details
             val gitUserDetails = GetUserInfo(userToken).execute().get()
+            gitUserDetails?.let {
+//                userName.text = gitUserDetails["userName"] as String
+//                createdAt.text = gitUserDetails["createdAt"] as String
+//                Picasso.with(applicationContext).load(gitUserDetails["avatarURL"] as String).into(profilePicture)
+//                Prefs.putString("userName", gitUserDetails["userName"] as String)
+                userName.text = gitUserDetails.login
+                createdAt.text = gitUserDetails.createdAt
+                Picasso.with(applicationContext).load(gitUserDetails.avatarUrl).into(profilePicture)
+                Prefs.putString("userName", gitUserDetails.login)
+            }
 
-            userName.text = gitUserDetails["userName"] as String
-            createdAt.text = gitUserDetails["createdAt"] as String
-            Picasso.with(applicationContext).load(gitUserDetails["avatarURL"] as String).into(profilePicture)
-            Prefs.putString("userName", gitUserDetails["userName"] as String)
             // ==== Obtain user repos ===
             val gitHubUserRepos = GetUserRepos(userToken).execute().get()
             if (gitHubUserRepos != null) {
@@ -104,12 +104,12 @@ class RepoListActivity : AppCompatActivity() {
                     } else {
                         description = repo.description as String
                     }
-                    val repository = Repository(nameOfRepo!!, description, language!!, gitUserDetails["userName"] as String)
+                    val repository = Repository(nameOfRepo!!, description, language!!, gitUserDetails.login!!)
                     repositoriesList.add(repository)
                 }
-                doAsync {
-                    saveInformationForSync(gitHubUserRepos, userToken!!)
-                }
+
+                saveInformationForSync(gitHubUserRepos, userToken!!)
+
             }
             // ==== Creating table ====
             val repositoriesAdapter = RepoListAdapter(repositoriesList)
@@ -123,47 +123,6 @@ class RepoListActivity : AppCompatActivity() {
                 }
             }.show()
         }
-
-//        val testButton = testButton as Button
-//        testButton.setOnClickListener {
-//            createNotification("test title", "test text")
-//        }
-    }
-
-    @SuppressLint("PrivateResource")
-    private fun createNotification(title: String, text: String) {
-        val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val notificationChannel: NotificationChannel
-        val builder: Notification.Builder
-        val channelID = "com.example.theblackdre1d.theclient"
-
-        val intent = Intent(this, RepoListActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notificationChannel = NotificationChannel(channelID, text, NotificationManager.IMPORTANCE_HIGH)
-            notificationChannel.enableLights(true)
-            notificationChannel.lightColor = Color.GREEN
-            notificationChannel.setShowBadge(true)
-            notificationChannel.enableVibration(true)
-            notificationChannel.setShowBadge(true)
-
-            notificationManager.createNotificationChannel(notificationChannel)
-
-            builder = Notification.Builder(this, channelID)
-                    .setContentTitle(title)
-                    .setContentText(text)
-                    .setSmallIcon(R.drawable.notification_icon_background)
-                    .setLargeIcon(BitmapFactory.decodeResource(this.resources, R.drawable.github))
-                    .setContentIntent(pendingIntent)
-        } else {
-            builder = Notification.Builder(this)
-                    .setContentTitle(title)
-                    .setContentText(text)
-                    .setSmallIcon(R.drawable.navigation_empty_icon)
-                    .setLargeIcon(BitmapFactory.decodeResource(this.resources, R.drawable.github))
-                    .setContentIntent(pendingIntent)
-        }
-        notificationManager.notify(1234, builder.build())
     }
 
     private fun saveInformationForSync(repositories: List<GitHubRepository>, token: String) {
@@ -205,19 +164,21 @@ class RepoListActivity : AppCompatActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    fun schedlueSync() {
+    fun scheduleSync() {
         val componentName = ComponentName(this, ReposSync::class.java)
-        val info = JobInfo.Builder(123, componentName)
-                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                .setPersisted(true)
-                .setPeriodic(15 * 60 * 1000)
-                .build()
-        val scheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
-        val resultCode = scheduler.schedule(info)
-        if (resultCode == JobScheduler.RESULT_SUCCESS) {
-            Log.i("SUCCESS", "Job scheduled")
-        } else {
-            Log.i("NOT SUCCESS", "Job scheduling failed")
+        doAsync {
+            val info = JobInfo.Builder(123, componentName)
+                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                    .setPersisted(true)
+                    .setPeriodic(15 * 60 * 1000)
+                    .build()
+            val scheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+            val resultCode = scheduler.schedule(info)
+            if (resultCode == JobScheduler.RESULT_SUCCESS) {
+                Log.i("SUCCESS", "Job scheduled")
+            } else {
+                Log.i("NOT SUCCESS", "Job scheduling failed")
+            }
         }
     }
 
@@ -249,17 +210,30 @@ class GetUserRepos(private val userToken: String?): AsyncTask<Unit, Unit, List<G
     }
 }
 
-class GetUserInfo(private val token: String?): AsyncTask<Unit, Unit, HashMap<String, Any>>() {
-    override fun doInBackground(vararg params: Unit?): HashMap<String, Any> {
-        val response = get("https://api.github.com/user?access_token=$token")
-        val JSONresponse = response.jsonObject
-        val avaterURL = JSONresponse.getString("avatar_url")
-        val userName = JSONresponse.getString("login")
-        val createdAt = JSONresponse.getString("created_at")
+class GetUserInfo(private val token: String?): AsyncTask<Unit, Unit, SimpleUser>() {
+    override fun doInBackground(vararg params: Unit?): SimpleUser {
         val userDetails = hashMapOf<String, Any>()
-        userDetails.put("avatarURL", avaterURL)
-        userDetails.put("userName", userName)
-        userDetails.put("createdAt", createdAt)
-        return userDetails
+        try {
+            //val (request, response, result) = "https://api.github.com/user?access_token=$token".httpGet().responseString() // result is Result<String, FuelError>
+            val response = get("https://api.github.com/user?access_token=$token")
+            val JSONresponse = response.jsonObject
+            val avatarURL = JSONresponse.getString("avatar_url")
+            val userName = JSONresponse.getString("login")
+            val createdAt = JSONresponse.getString("created_at")
+            userDetails.put("avatarURL", avatarURL)
+            userDetails.put("userName", userName)
+            userDetails.put("createdAt", createdAt)
+            val user = SimpleUser(userName, avatarURL, createdAt)
+            return user
+        } catch (exception: Exception) {
+            Log.i("ERROR", "${exception.stackTrace}")
+        }
+        return SimpleUser("", "", "")
+//        val gitHubService = GitHubAPI.create()
+//        val userInfo = gitHubService.getUser(token!!).execute()
+//        val gson = Gson()
+//        val responseString = userInfo.body()!!.string()
+//        val user = gson.fromJson<SimpleUser>(responseString, SimpleUser::class.java)
+//        return user
     }
 }

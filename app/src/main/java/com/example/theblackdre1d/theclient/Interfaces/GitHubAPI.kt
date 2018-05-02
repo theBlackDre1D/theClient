@@ -1,6 +1,7 @@
 package com.example.theblackdre1d.theclient.Interfaces
 
 import com.example.theblackdre1d.theclient.Models.*
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -11,7 +12,7 @@ import retrofit2.http.Query
 
 interface GitHubAPI {
     @GET("user")
-    fun getUser(@Query("access_token") accessToken: String): Call<User>
+    fun getUser(@Query("access_token") accessToken: String): Call<ResponseBody>
 
     @GET("user/repos")
     fun getUserRepos(@Query("access_token") accessToken: String): Call<List<GitHubRepository>>

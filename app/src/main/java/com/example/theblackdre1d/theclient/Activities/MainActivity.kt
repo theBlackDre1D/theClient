@@ -73,13 +73,13 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("CommitPrefEdits")
    override fun onResume() {
+        super.onResume()
         val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
         val token: String? = sharedPreferences.getString("access_token",null)
         token?.let {
             val intent = Intent(this, RepoListActivity::class.java)
             startActivity(intent)
         }
-        super.onResume()
 
         //Setting up looping background video
         val uri: Uri = Uri.parse("android.resource://"+packageName+"/"+ R.raw.backgorund_movie)
@@ -91,9 +91,11 @@ class MainActivity : AppCompatActivity() {
 //            skipMainActivity = true
             val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
             val uri: Uri? = intent.data
-            ObtainAccessToken(uri, sharedPreferences).execute()
-            val intent = Intent(this, RepoListActivity::class.java)
-            startActivity(intent)
+            val tokenObtained: Boolean = ObtainAccessToken(uri, sharedPreferences).execute().get()
+            if (tokenObtained) {
+                val intent = Intent(this, RepoListActivity::class.java)
+                startActivity(intent)
+            }
         }
     }
 
@@ -103,9 +105,9 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-class ObtainAccessToken(val uri: Uri?, var sharedPref: SharedPreferences): AsyncTask<Unit, Unit, Unit>() {
+class ObtainAccessToken(val uri: Uri?, var sharedPref: SharedPreferences): AsyncTask<Unit, Unit, Boolean>() {
     @SuppressLint("ApplySharedPref", "CommitPrefEdits")
-    override fun doInBackground(vararg params: Unit?) {
+    override fun doInBackground(vararg params: Unit?): Boolean {
         val clientID = Token.clientID
         val clientSecret = Token.clientSecret
         val redirectURI = "theclient://callback"
@@ -124,7 +126,9 @@ class ObtainAccessToken(val uri: Uri?, var sharedPref: SharedPreferences): Async
                     putString("access_token",accessToken)
                     commit()
                 }
+                return true
             }
         }
+        return false
     }
 }

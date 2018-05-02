@@ -186,6 +186,7 @@ class RepoListActivity : AppCompatActivity() {
             title = "Log off"
             yesButton {
                 Prefs.putBoolean("skip", false)
+                Prefs.putBoolean("skipScheduleSync", false)
                 val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
                 sharedPreferences.edit().remove("access_token").apply()
                 super.onBackPressed()

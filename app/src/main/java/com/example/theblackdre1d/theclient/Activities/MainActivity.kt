@@ -58,15 +58,17 @@ class MainActivity : AppCompatActivity() {
                     startActivity(intent)
                 }
             }
-            alert("You have to be connected to proceed") {
-                yesButton {
-                    val intent = Intent()
-                    intent.action = Settings.ACTION_SETTINGS
-                    val uri = Uri.fromParts("package", packageResourcePath, null)
-                    intent.data = uri
-                    startActivityForResult(intent, 0)
-                }
-            }.show()
+            if (networkInfo == null) {
+                alert("You have to be connected to proceed") {
+                    yesButton {
+                        val intent = Intent()
+                        intent.action = Settings.ACTION_SETTINGS
+                        val uri = Uri.fromParts("package", packageResourcePath, null)
+                        intent.data = uri
+                        startActivityForResult(intent, 0)
+                    }
+                }.show()
+            }
         }
     }
 
@@ -80,9 +82,6 @@ class MainActivity : AppCompatActivity() {
         }
         super.onResume()
 
-        if (token != null) {
-
-        }
         //Setting up looping background video
         val uri: Uri = Uri.parse("android.resource://"+packageName+"/"+ R.raw.backgorund_movie)
         backgroundVideo.setVideoURI(uri)

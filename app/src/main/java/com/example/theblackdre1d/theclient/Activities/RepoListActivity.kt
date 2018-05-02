@@ -28,7 +28,6 @@ import com.example.theblackdre1d.theclient.Interfaces.GitHubAPI
 import com.example.theblackdre1d.theclient.Models.*
 import com.example.theblackdre1d.theclient.R
 import com.example.theblackdre1d.theclient.ReposSync
-import com.github.kittinunf.fuel.httpGet
 import com.google.gson.Gson
 import com.pixplicity.easyprefs.library.Prefs
 import com.squareup.picasso.Picasso
@@ -46,6 +45,8 @@ class RepoListActivity : AppCompatActivity() {
         val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = connectivityManager.activeNetworkInfo
 
+        val skipScheduleSync = Prefs.getBoolean("skipScheduleSync", false)
+
         if (networkInfo == null) {
             alert("You have to be connected to proceed") {
                 yesButton({
@@ -54,9 +55,12 @@ class RepoListActivity : AppCompatActivity() {
             }.show()
         }
 
-        doAsync {
-            scheduleSync()
+        if (!skipScheduleSync) {
+            doAsync {
+                scheduleSync()
+            }
         }
+        Prefs.putBoolean("skipScheduleSync", true)
     }
 
     @SuppressLint("CommitPrefEdits")
@@ -82,10 +86,6 @@ class RepoListActivity : AppCompatActivity() {
             // Obtain user details
             val gitUserDetails = GetUserInfo(userToken).execute().get()
             gitUserDetails?.let {
-//                userName.text = gitUserDetails["userName"] as String
-//                createdAt.text = gitUserDetails["createdAt"] as String
-//                Picasso.with(applicationContext).load(gitUserDetails["avatarURL"] as String).into(profilePicture)
-//                Prefs.putString("userName", gitUserDetails["userName"] as String)
                 userName.text = gitUserDetails.login
                 createdAt.text = gitUserDetails.createdAt
                 Picasso.with(applicationContext).load(gitUserDetails.avatarUrl).into(profilePicture)
@@ -107,9 +107,9 @@ class RepoListActivity : AppCompatActivity() {
                     val repository = Repository(nameOfRepo!!, description, language!!, gitUserDetails.login!!)
                     repositoriesList.add(repository)
                 }
-
-                saveInformationForSync(gitHubUserRepos, userToken!!)
-
+                doAsync {
+                    saveInformationForSync(gitHubUserRepos, userToken!!)
+                }
             }
             // ==== Creating table ====
             val repositoriesAdapter = RepoListAdapter(repositoriesList)
@@ -198,7 +198,6 @@ class RepoListActivity : AppCompatActivity() {
         Prefs.putBoolean("skip", false)
     }
 }
-
 // =====================================================================================================================
 
 // AsyncTask class -> better to declare it in separate file
@@ -212,7 +211,6 @@ class GetUserRepos(private val userToken: String?): AsyncTask<Unit, Unit, List<G
 
 class GetUserInfo(private val token: String?): AsyncTask<Unit, Unit, SimpleUser>() {
     override fun doInBackground(vararg params: Unit?): SimpleUser {
-        val userDetails = hashMapOf<String, Any>()
         try {
             //val (request, response, result) = "https://api.github.com/user?access_token=$token".httpGet().responseString() // result is Result<String, FuelError>
             val response = get("https://api.github.com/user?access_token=$token")
@@ -220,20 +218,12 @@ class GetUserInfo(private val token: String?): AsyncTask<Unit, Unit, SimpleUser>
             val avatarURL = JSONresponse.getString("avatar_url")
             val userName = JSONresponse.getString("login")
             val createdAt = JSONresponse.getString("created_at")
-            userDetails.put("avatarURL", avatarURL)
-            userDetails.put("userName", userName)
-            userDetails.put("createdAt", createdAt)
+
             val user = SimpleUser(userName, avatarURL, createdAt)
             return user
         } catch (exception: Exception) {
             Log.i("ERROR", "${exception.stackTrace}")
         }
         return SimpleUser("", "", "")
-//        val gitHubService = GitHubAPI.create()
-//        val userInfo = gitHubService.getUser(token!!).execute()
-//        val gson = Gson()
-//        val responseString = userInfo.body()!!.string()
-//        val user = gson.fromJson<SimpleUser>(responseString, SimpleUser::class.java)
-//        return user
     }
 }

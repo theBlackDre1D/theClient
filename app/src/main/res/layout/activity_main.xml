@@ -20,24 +20,25 @@
 
     <TextView
         android:id="@+id/theClientText"
-        android:layout_width="281dp"
-        android:layout_height="94dp"
+        android:layout_width="384dp"
+        android:layout_height="118dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="164dp"
+        android:layout_marginTop="200dp"
         android:text="@string/the_client"
         android:textAlignment="center"
         android:textColor="@android:color/background_light"
-        android:textSize="50dp"
+        android:textSize="90dp"
+        android:textStyle="normal|bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.505"
+        app:layout_constraintHorizontal_bias="0.454"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/logInButton"
-        android:layout_width="139dp"
-        android:layout_height="37dp"
+        android:layout_width="158dp"
+        android:layout_height="52dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
@@ -49,9 +50,27 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/backgroundVideo"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.645" />
+        app:layout_constraintVertical_bias="0.624" />
+
+    <TextView
+        android:id="@+id/welcomeTextTextView"
+        android:layout_width="347dp"
+        android:layout_height="58dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center_vertical|center_horizontal"
+        android:text="You are about login to your GitHub account"
+        android:textColor="@android:color/background_light"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/logInButton" />
 
 </android.support.constraint.ConstraintLayout>

@@ -91,7 +91,6 @@ class RepoListActivity : AppCompatActivity() {
                 Picasso.with(applicationContext).load(gitUserDetails.avatarUrl).into(profilePicture)
                 Prefs.putString("userName", gitUserDetails.login)
             }
-
             // ==== Obtain user repos ===
             val gitHubUserRepos = GetUserRepos(userToken).execute().get()
             if (gitHubUserRepos != null) {

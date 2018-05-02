@@ -49,7 +49,6 @@ class MainActivity : AppCompatActivity() {
         theClientText.typeface = font
 
         logInButton.setOnClickListener {
-            // TODO Find if user is connected
             val conectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
             val networkInfo = conectivityManager.activeNetworkInfo
             networkInfo?.let {

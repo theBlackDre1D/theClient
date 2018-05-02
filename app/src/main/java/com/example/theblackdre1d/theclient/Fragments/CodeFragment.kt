@@ -4,9 +4,12 @@ import android.annotation.SuppressLint
 import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.ListView
 import com.example.theblackdre1d.theclient.Adapters.ContentListAdapter
 import com.example.theblackdre1d.theclient.Interfaces.GitHubAPI
@@ -25,9 +28,12 @@ class CodeFragment(val userName: String, val repoName: String, val token: String
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val rootView = inflater.inflate(R.layout.content_fragment, container, false)
-        val listView = rootView.contentListView as ListView
-        val contentList = GetRepoContent(userName, repoName, token).execute().get()
-        listView.adapter = ContentListAdapter(context!!, contentList)
+        val repoFiles = GetRepoContent(userName, repoName, token).execute().get()
+        val table = rootView.tableRecyclerView as RecyclerView
+        val context =  container!!.context
+        table.layoutManager = LinearLayoutManager(context, LinearLayout.VERTICAL, false)
+        val contentAdapter = ContentListAdapter(repoFiles)
+        table.adapter = contentAdapter
         return rootView
     }
 }

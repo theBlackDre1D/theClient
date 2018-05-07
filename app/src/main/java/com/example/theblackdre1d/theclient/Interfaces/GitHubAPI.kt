@@ -20,12 +20,15 @@ interface GitHubAPI {
     @GET("repos/{name}/{repo}/commits")
     fun getRepoCommits(@Path("name") name: String, @Path("repo") repo: String, @Query("access_token") accessToken: String): Call<List<GitHubCommit>>
 
-    @GET("repos/{name}/{repo}/contents{path}")
+    @GET("repos/{name}/{repo}/contents/{path}")
     fun getRepoContent(@Path("name") name: String, @Path("repo") repo: String, @Path("path") path: String,
                        @Query("access_token") accessToken: String): Call<List<GitHubRepoContent>>
 
     @GET("repos/{name}/{repo}/pulls")
     fun getRepoPulls(@Path("name") name: String, @Path("repo") repo: String, @Query("access_token") accessToken: String): Call<List<GitHubPullRequest>>
+
+    @GET("repos/{owner}/{repoName}/branches")
+    fun getRepoBranches(@Path("owner") owner: String, @Path("repoName") repoName: String, @Query("access_token") accessToken: String): Call<ArrayList<GitHubBranch>>
 
     companion object Factory {
         fun create(): GitHubAPI {

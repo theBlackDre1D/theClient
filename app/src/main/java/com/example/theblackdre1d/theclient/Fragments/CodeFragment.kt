@@ -1,6 +1,7 @@
 package com.example.theblackdre1d.theclient.Fragments
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
@@ -14,14 +15,14 @@ import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.Toast
+import com.example.theblackdre1d.theclient.Activities.FileActivity
 import com.example.theblackdre1d.theclient.Adapters.ContentListAdapter
 import com.example.theblackdre1d.theclient.Interfaces.GitHubAPI
 import com.example.theblackdre1d.theclient.Models.GitHubBranch
 import com.example.theblackdre1d.theclient.Models.GitHubRepoContent
 import com.example.theblackdre1d.theclient.R
-import kotlinx.android.synthetic.main.content_fragment.*
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.content_fragment.view.*
-import org.jetbrains.anko.forEachChild
 
 @SuppressLint("ValidFragment")
 class CodeFragment(val userName: String, val repoName: String, val token: String): Fragment() {
@@ -41,31 +42,40 @@ class CodeFragment(val userName: String, val repoName: String, val token: String
             Toast.makeText(context, "Back button working!", Toast.LENGTH_LONG).show()
         }
 
-        val branchPick = rootView.branchPickSpinner as Spinner
-        val branchesStrings = mutableListOf<String>()
-        val branches = GetRepoBranches(userName, repoName, token).execute().get()
-        branches.forEach { it ->
-            branchesStrings.add(it.name!!)
-        }
-        val adapter = ArrayAdapter(context, R.layout.support_simple_spinner_dropdown_item, branchesStrings)
-        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
-        branchPick.adapter = adapter
+//        val branchPick = rootView.branchPickSpinner as Spinner
+//        val branchesStrings = mutableListOf<String>()
+//        val branches = GetRepoBranches(userName, repoName, token).execute().get()
+//        branches.forEach { it ->
+//            branchesStrings.add(it.name!!)
+//        }
+//        val adapter = ArrayAdapter(context, R.layout.support_simple_spinner_dropdown_item, branchesStrings)
+//        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
+//        branchPick.adapter = adapter
 
         return rootView
     }
 
     private fun rowClicked(row: GitHubRepoContent) {
-        //Toast.makeText(context, "Clicked row: ${row.name}", Toast.LENGTH_LONG).show()
-        val potentialNewFiles = GetRepoContent(userName, repoName, token, row.path!!).execute().get()
-        if (potentialNewFiles.isNotEmpty()) {
-            val contentAdapter = ContentListAdapter(potentialNewFiles, { row: GitHubRepoContent -> rowClicked(row) })
-            table.adapter = contentAdapter
-            table.invalidate() // this refresh table intent
+        if (row.type == "dir") {
+            val potentialNewFiles = GetRepoContent(userName, repoName, token, row.path!!).execute().get()
+            if (potentialNewFiles.isNotEmpty()) {
+                val contentAdapter = ContentListAdapter(potentialNewFiles, { row: GitHubRepoContent -> rowClicked(row) })
+                table.adapter = contentAdapter
+                table.invalidate() // this refresh table intent
+            } else {
+                Toast.makeText(context, "Folder is empty", Toast.LENGTH_LONG).show()
+            }
         } else {
-            Toast.makeText(context, "Folder is empty", Toast.LENGTH_LONG).show()
+            //otvorit subor
+            val gson = Gson()
+            val JSONrow = gson.toJson(row)
+            val intent = Intent(context, FileActivity::class.java)
+            intent.putExtra("row", JSONrow)
+            intent.putExtra("userName", userName)
+            intent.putExtra("repoName", repoName)
+            startActivity(intent)
         }
     }
-
 }
 
 class GetRepoContent(private val userName: String, private val repoName: String, private val token: String, val path: String = ""): AsyncTask<Unit, Unit, List<GitHubRepoContent>>() {
@@ -83,3 +93,4 @@ class GetRepoBranches(private val userName: String, private val repoName: String
         return respond
     }
 }
+

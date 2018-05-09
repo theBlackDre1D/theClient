@@ -28,7 +28,7 @@ interface GitHubAPI {
     fun getRepoPulls(@Path("name") name: String, @Path("repo") repo: String, @Query("access_token") accessToken: String): Call<List<GitHubPullRequest>>
 
     @GET("repos/{owner}/{repoName}/branches")
-    fun getRepoBranches(@Path("owner") owner: String, @Path("repoName") repoName: String, @Query("access_token") accessToken: String): Call<ArrayList<GitHubBranch>>
+    fun getRepoBranches(@Path("owner") owner: String, @Path("repoName") repoName: String, @Query("access_token") accessToken: String): Call<List<GitHubBranch>>
 
     companion object Factory {
         fun create(): GitHubAPI {

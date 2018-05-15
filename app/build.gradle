@@ -72,4 +72,7 @@ dependencies {
     // codeview
     implementation 'com.pddstudio:highlightjs-android:1.5.0'
 
+    //Android-Job
+    implementation 'com.evernote:android-job:1.2.5'
+
 }

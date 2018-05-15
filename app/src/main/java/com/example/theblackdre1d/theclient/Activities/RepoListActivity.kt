@@ -163,22 +163,10 @@ class RepoListActivity : AppCompatActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    fun scheduleSync() {
+    private fun scheduleSync() {
         val componentName = ComponentName(this, ReposSync::class.java)
-        doAsync {
-            val info = JobInfo.Builder(123, componentName)
-                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                    .setPersisted(true)
-                    .setPeriodic(15 * 60 * 1000)
-                    .build()
-            val scheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
-            val resultCode = scheduler.schedule(info)
-            if (resultCode == JobScheduler.RESULT_SUCCESS) {
-                Log.i("SUCCESS", "Job scheduled")
-            } else {
-                Log.i("NOT SUCCESS", "Job scheduling failed")
-            }
-        }
+        val scheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+        SetupSync(componentName, scheduler).execute().get()
     }
 
     fun logOut(view: View) {
@@ -225,5 +213,23 @@ class GetUserInfo(private val token: String?): AsyncTask<Unit, Unit, SimpleUser>
             Log.i("ERROR", "${exception.stackTrace}")
         }
         return SimpleUser("", "", "")
+    }
+}
+
+class SetupSync(private val component: ComponentName, private val scheduler: JobScheduler): AsyncTask<Unit, Unit, Unit>() {
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    override fun doInBackground(vararg params: Unit?) {
+        val info = JobInfo.Builder(123, component)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                .setPersisted(true)
+                .setPeriodic(15 * 60 * 1000)
+                .build()
+        //val scheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+        val resultCode = scheduler.schedule(info)
+        if (resultCode == JobScheduler.RESULT_SUCCESS) {
+            Log.i("SUCCESS", "Job scheduled")
+        } else {
+            Log.i("NOT SUCCESS", "Job scheduling failed")
+        }
     }
 }

@@ -21,7 +21,7 @@ class FileActivity : AppCompatActivity() {
         val userName = intent.getStringExtra("userName")
         val repoName = intent.getStringExtra("repoName")
         val settings = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
-        val token = settings?.getString("access_token", null)
+        //val token = settings?.getString("access_token", null)
         val gson = Gson()
         val row = gson.fromJson<GitHubRepoContent>(JSONrow, GitHubRepoContent::class.java)
         val file = GetFile(userName, repoName, "master", row.path!!).execute().get()

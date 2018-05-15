@@ -27,7 +27,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="160dp"
-        android:contentDescription="pull request image"
+        android:contentDescription="@string/pull_request_image"
         android:visibility="gone"
         app:srcCompat="@drawable/pull_request" />
 
@@ -40,7 +40,7 @@
         android:layout_marginBottom="202dp"
         android:fontFamily="cursive"
         android:visibility="gone"
-        android:text="No pull request at this moment"
+        android:text="@string/no_pull_request_at_this_moment"
         android:textAllCaps="false"
         android:textSize="30sp"
         android:textStyle="bold"

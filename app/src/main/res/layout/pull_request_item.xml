@@ -22,7 +22,7 @@
                 android:id="@+id/headerTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="message"
+                android:text="@string/message"
                 android:textAlignment="center"
                 android:textColor="@android:color/background_dark"
                 android:textStyle="bold" />
@@ -31,11 +31,11 @@
                 android:id="@+id/authorTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="author name"/>
+                android:text="@string/author_name"/>
 
             <TextView
                 android:id="@+id/dateTextView"
-                android:text="date of creation pull request"
+                android:text="@string/date_of_creation_pull_request"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 />

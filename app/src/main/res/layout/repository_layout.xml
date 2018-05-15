@@ -48,7 +48,7 @@
                 android:paddingLeft="10dp"
                 android:paddingStart="10dp"
                 android:paddingTop="10dp"
-                android:text="repo description"
+                android:text="@string/repo_description"
                 android:textStyle="italic" />
 
             <TextView
@@ -57,7 +57,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
                 android:paddingRight="20dp"
-                android:text="language"
+                android:text="@string/language"
                 android:textAlignment="viewEnd" />
 
             <TextView

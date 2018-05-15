@@ -22,7 +22,7 @@ interface GitHubAPI {
 
     @GET("repos/{name}/{repo}/contents/{path}")
     fun getRepoContent(@Path("name") name: String, @Path("repo") repo: String, @Path("path") path: String,
-                       @Query("access_token") accessToken: String): Call<List<GitHubRepoContent>>
+                       @Query("ref") ref: String, @Query("access_token") accessToken: String): Call<List<GitHubRepoContent>>
 
     @GET("repos/{name}/{repo}/pulls")
     fun getRepoPulls(@Path("name") name: String, @Path("repo") repo: String, @Query("access_token") accessToken: String): Call<List<GitHubPullRequest>>

@@ -16,4 +16,19 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="repoPath">repo path</string>
+    <string name="created_at">Created at:</string>
+    <string name="log_out">Log Out</string>
+    <string name="textView">TextView</string>
+    <string name="name">name</string>
+    <string name="back">back</string>
+    <string name="home">home</string>
+    <string name="welcome_phrase">You are about login to your GitHub account!</string>
+    <string name="message">message</string>
+    <string name="author_name">author name</string>
+    <string name="date_of_commit">date of commit</string>
+    <string name="date_of_creation_pull_request">date of creation pull request</string>
+    <string name="pull_request_image">pull request image</string>
+    <string name="no_pull_request_at_this_moment">No pull request at this moment</string>
+    <string name="repo_description">repo description</string>
+    <string name="language">language</string>
 </resources>

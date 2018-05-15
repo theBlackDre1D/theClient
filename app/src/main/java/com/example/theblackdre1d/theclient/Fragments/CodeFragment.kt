@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -27,9 +26,11 @@ class CodeFragment(private val userName: String, private val repoName: String, p
     lateinit var table: RecyclerView
     private var branch = "master"
     private val branchesStrings = mutableListOf<String>()
-    private var homePath: String = ""
+    //private var homePath: String = ""
     private val previousFolders = ArrayList<String>()
+    private var count = 0
 
+    @SuppressLint("ShowToast")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val rootView = inflater.inflate(R.layout.content_fragment, container, false)
         val repoFiles = GetRepoContent(userName, repoName, token).execute().get()
@@ -41,11 +42,15 @@ class CodeFragment(private val userName: String, private val repoName: String, p
 
         val backButton = rootView.backButton as Button
         backButton.setOnClickListener {
-            val backPath = buildString()
-            val previousFiles = GetRepoContent(userName, repoName, token, backPath, branch).execute().get()
-            val contentAdapter = ContentListAdapter(previousFiles, { row: GitHubRepoContent -> rowClicked(row) })
-            table.adapter = contentAdapter
-            table.invalidate() // this refresh table intent
+            if (count > 0) {
+                val backPath = buildString()
+                val previousFiles = GetRepoContent(userName, repoName, token, backPath, branch).execute().get()
+                val contentAdapter = ContentListAdapter(previousFiles, { row: GitHubRepoContent -> rowClicked(row) })
+                table.adapter = contentAdapter
+                table.invalidate() // this refresh table intent
+                count--
+            }
+            Toast.makeText(context, "You're in root directory", Toast.LENGTH_SHORT)
         }
 
         val branchPick = rootView.branchPickSpinner as Spinner
@@ -75,6 +80,7 @@ class CodeFragment(private val userName: String, private val repoName: String, p
             previousFolders.add(row.name!!)
             val potentialNewFiles = GetRepoContent(userName, repoName, token, row.path!!).execute().get()
             if (potentialNewFiles.isNotEmpty()) {
+                count++
                 val contentAdapter = ContentListAdapter(potentialNewFiles, { row: GitHubRepoContent -> rowClicked(row) })
                 table.adapter = contentAdapter
                 table.invalidate() // this refresh table intent
@@ -93,11 +99,13 @@ class CodeFragment(private val userName: String, private val repoName: String, p
         }
     }
 
+    @SuppressLint("ShowToast")
     private fun refreshContentTable(branchName: String) {
         val newFiles = GetRepoContent(userName, repoName, token, branchName = branchName).execute().get()
         val contentAdapter = ContentListAdapter(newFiles, { row: GitHubRepoContent -> rowClicked(row) })
         table.adapter = contentAdapter
         table.invalidate() // this refresh table intent
+        Toast.makeText(context, "Currently on branch: ${branchName}", Toast.LENGTH_SHORT)
     }
 
     // Spinner selection handling
@@ -105,12 +113,14 @@ class CodeFragment(private val userName: String, private val repoName: String, p
         return // do nothing§
     }
 
+    @SuppressLint("ShowToast")
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         val potentionalyNewBranch = branchesStrings[position]
         if (potentionalyNewBranch != branch) {
             // TODO: refresh table content based on branch name find how on GitHub API
             refreshContentTable(potentionalyNewBranch)
         } else {
+            Toast.makeText(context, "Branch was not changed.", Toast.LENGTH_SHORT)
             return // do nothing
         }
     }

@@ -28,7 +28,7 @@ class CodeFragment(private val userName: String, private val repoName: String, p
     private var branch = "master"
     private val branchesStrings = mutableListOf<String>()
     private var homePath: String = ""
-    private val previousPaths = ArrayList<String>()
+    private val previousFolders = ArrayList<String>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val rootView = inflater.inflate(R.layout.content_fragment, container, false)
@@ -41,10 +41,8 @@ class CodeFragment(private val userName: String, private val repoName: String, p
 
         val backButton = rootView.backButton as Button
         backButton.setOnClickListener {
-//            previousPath = previousPaths[previousPathIndex]
-//            previousPaths.removeAt(previousPathIndex)
-//            previousPathIndex--
-            val previousFiles = GetRepoContent(userName, repoName, token, homePath, branch).execute().get()
+            val backPath = buildString()
+            val previousFiles = GetRepoContent(userName, repoName, token, backPath, branch).execute().get()
             val contentAdapter = ContentListAdapter(previousFiles, { row: GitHubRepoContent -> rowClicked(row) })
             table.adapter = contentAdapter
             table.invalidate() // this refresh table intent
@@ -63,15 +61,18 @@ class CodeFragment(private val userName: String, private val repoName: String, p
         return rootView
     }
 
+    private fun buildString(): String {
+        previousFolders.remove(previousFolders.last()) // remove last folder from list
+        var result = ""
+        previousFolders.forEach { folder ->
+            result += "/$folder"
+        }
+        return result
+    }
+
     private fun rowClicked(row: GitHubRepoContent) {
         if (row.type == "dir") {
-//            if (previousPathIndex == -1) {
-//                previousPaths.add(previousPath)
-//                previousPathIndex++
-//            } else {
-//                previousPaths.add(row.path!!)
-//                previousPathIndex++
-//            }
+            previousFolders.add(row.name!!)
             val potentialNewFiles = GetRepoContent(userName, repoName, token, row.path!!).execute().get()
             if (potentialNewFiles.isNotEmpty()) {
                 val contentAdapter = ContentListAdapter(potentialNewFiles, { row: GitHubRepoContent -> rowClicked(row) })

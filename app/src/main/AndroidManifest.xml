@@ -48,8 +48,7 @@
             android:name=".ReposSync"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
-        <activity android:name=".Activities.FileActivity"
-            android:screenOrientation="portrait"></activity>
+        <activity android:name=".Activities.FileActivity"></activity>
     </application>
 
 </manifest>

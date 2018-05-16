@@ -18,10 +18,7 @@ import com.example.theblackdre1d.theclient.Activities.GetUserRepos
 import com.example.theblackdre1d.theclient.Activities.RepoListActivity
 import com.example.theblackdre1d.theclient.Fragments.GetRepoPulls
 import com.example.theblackdre1d.theclient.Fragments.GetReposCommits
-import com.example.theblackdre1d.theclient.Interfaces.GitHubAPI
-import com.example.theblackdre1d.theclient.Models.GitHubRepository
 import com.example.theblackdre1d.theclient.Models.SavedRepository
-import com.github.salomonbrys.kotson.toJson
 import com.google.gson.Gson
 import com.pixplicity.easyprefs.library.Prefs
 

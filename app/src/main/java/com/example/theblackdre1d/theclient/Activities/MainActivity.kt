@@ -19,7 +19,6 @@ import com.pixplicity.easyprefs.library.Prefs
 import kotlinx.android.synthetic.main.activity_main.*
 import khttp.post
 import org.jetbrains.anko.alert
-import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.yesButton
 
 class MainActivity : AppCompatActivity() {

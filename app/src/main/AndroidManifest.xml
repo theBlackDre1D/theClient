@@ -14,7 +14,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activities.MainActivity">
+        <activity android:name=".Activities.MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -31,11 +32,13 @@
                     android:scheme="theclient" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.RepoListActivity" />
+        <activity android:name=".Activities.RepoListActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Activities.RepositoryActivity"
             android:label="@string/title_activity_repository"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait"/>
         <!-- <activity -->
         <!-- android:name=".Activities.RepositoryActivity" -->
         <!-- android:label="@string/title_activity_repository" -->
@@ -45,7 +48,8 @@
             android:name=".ReposSync"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
-        <activity android:name=".Activities.FileActivity"></activity>
+        <activity android:name=".Activities.FileActivity"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

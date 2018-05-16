@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,7 +34,7 @@ class CodeFragment(private val userName: String, private val repoName: String, p
     @SuppressLint("ShowToast")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val rootView = inflater.inflate(R.layout.content_fragment, container, false)
-        val repoFiles = GetRepoContent(userName, repoName, token).execute().get()
+        val repoFiles = GetRepoContent(userName, repoName, token).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get()
         table = rootView.tableRecyclerView as RecyclerView
         val context =  container!!.context
         table.layoutManager = LinearLayoutManager(context, LinearLayout.VERTICAL, false)
@@ -129,6 +130,7 @@ class CodeFragment(private val userName: String, private val repoName: String, p
 class GetRepoContent(private val userName: String, private val repoName: String, private val token: String,
                      private val path: String = "", private val branchName: String? = "master"): AsyncTask<Unit, Unit, List<GitHubRepoContent>>() {
     override fun doInBackground(vararg params: Unit?): List<GitHubRepoContent>? {
+        Log.i("Token", token)
         val gitHubService = GitHubAPI.create()
         val respond = gitHubService.getRepoContent(userName, repoName, path, branchName!!,token).execute().body()
         return respond

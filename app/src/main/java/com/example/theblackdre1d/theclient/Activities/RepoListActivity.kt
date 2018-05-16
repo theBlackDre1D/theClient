@@ -54,13 +54,12 @@ class RepoListActivity : AppCompatActivity() {
                 })
             }.show()
         }
-
-        if (!skipScheduleSync) {
-            doAsync {
-                scheduleSync()
-            }
-        }
-        Prefs.putBoolean("skipScheduleSync", true)
+        scheduleSync()
+//        if (!skipScheduleSync) {
+//            scheduleSync()
+//
+//        }
+//        Prefs.putBoolean("skipScheduleSync", true)
     }
 
     @SuppressLint("CommitPrefEdits")

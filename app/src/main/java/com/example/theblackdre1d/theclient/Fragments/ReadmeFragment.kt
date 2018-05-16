@@ -10,7 +10,10 @@ import android.view.ViewGroup
 import com.example.theblackdre1d.theclient.R
 import khttp.get
 import kotlinx.android.synthetic.main.readme_fragment.view.*
-
+/*
+* Fragment showing README file.
+* One request to obtaing README file.
+* */
 @SuppressLint("ValidFragment")
 class ReadmeFragment(val userName: String, val repoName: String, val branch: String? = "master"): Fragment() {
 
@@ -21,7 +24,9 @@ class ReadmeFragment(val userName: String, val repoName: String, val branch: Str
         return rootView
     }
 }
-
+/*
+* Obtaing GEADME content - khttp library.
+* */
 class GetREADME(val userName: String, val repoName: String, val branch: String? = "master"): AsyncTask<Unit, Unit, String>() {
 
     override fun doInBackground(vararg params: Unit?): String {

@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,11 +16,11 @@ import com.example.theblackdre1d.theclient.Adapters.CommitsAdapter
 import com.example.theblackdre1d.theclient.Interfaces.GitHubAPI
 import com.example.theblackdre1d.theclient.Models.GitHubCommit
 import com.example.theblackdre1d.theclient.R
-import com.example.theblackdre1d.theclient.Token
-import com.google.gson.Gson
-import com.pixplicity.easyprefs.library.Prefs
 import kotlinx.android.synthetic.main.commits_fragment.view.*
-
+/*
+* One request on GitHub server for commits - only last 30 commits.
+* Via commits adapter they are displayed.
+* */
 @SuppressLint("ValidFragment")
 class CommitsFragment(val userName: String, val repositoryName: String) : Fragment() {
 
@@ -45,7 +44,10 @@ class CommitsFragment(val userName: String, val repositoryName: String) : Fragme
         return rootView
     }
 }
-
+/*
+* AsyncTask for get commits from GitHub.
+* Return list of commits objects.
+* */
 class GetReposCommits(private val userToken: String, private val userName: String, private val repoName: String): AsyncTask<Unit, Unit, List<GitHubCommit>>() {
     override fun doInBackground(vararg params: Unit?): List<GitHubCommit>? {
         val gitHubService = GitHubAPI.create()

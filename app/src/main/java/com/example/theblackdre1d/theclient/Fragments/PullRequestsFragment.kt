@@ -16,7 +16,10 @@ import com.example.theblackdre1d.theclient.Interfaces.GitHubAPI
 import com.example.theblackdre1d.theclient.Models.GitHubPullRequest
 import com.example.theblackdre1d.theclient.R
 import kotlinx.android.synthetic.main.pull_requests_fragment.view.*
-
+/*
+* One request on GitHub server for pull requests.
+* Via pull requests adapter they are displayed.
+* */
 @SuppressLint("ValidFragment")
 class PullRequestsFragment(private val userName: String, val repoName: String): Fragment() {
     @SuppressLint("CommitPrefEdits")
@@ -41,7 +44,10 @@ class PullRequestsFragment(private val userName: String, val repoName: String): 
         return rootView
     }
 }
-
+/*
+* Obtaining pull requests from GitHub.
+* Return list of pull requests objects.
+* */
 class GetRepoPulls(val userName: String, val repoName: String, val token: String): AsyncTask<Unit, Unit, List<GitHubPullRequest>?>() {
     override fun doInBackground(vararg params: Unit?): List<GitHubPullRequest>? {
         val gitHubService = GitHubAPI.create()

@@ -20,7 +20,12 @@ import kotlinx.android.synthetic.main.activity_main.*
 import khttp.post
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.yesButton
-
+/*
+* First activity after first launch.
+* Initializing Prefs library - easy SharedPreferencies manipulation
+* Initializing UI elements and network checking - if user is not connected to internet show alert and redirect to settings.
+* After click on button user is redirected to web browser and he/she then use email/user name and password to log in to GitHub.
+* */
 class MainActivity : AppCompatActivity() {
     var clientID = Token.clientID
     var redirectURI = "theclient://callback"
@@ -69,7 +74,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
+    /*
+    * Initialization of UI elements and background video.
+    * If token is already in SharedPreferencies redirect to RepoListActivity.kt.
+    * If not obtain user token via ObtainAccessToken AsyncClass.
+    * */
     @SuppressLint("CommitPrefEdits")
    override fun onResume() {
         super.onResume()
@@ -97,13 +106,19 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
+    /*
+    * Put boolean valuse in Prefs - because of this if user is already logged this activity is skipped.
+    * */
     override fun onPause() {
         super.onPause()
         Prefs.putBoolean("skip", true)
     }
 }
-
+/*
+* Obtaining user token for autentification user and saving token in SharedPreferencies.
+* Post request on GitGub server for obtain access token and store it in shared preferencies.
+* Prefs not working here :(
+* */
 class ObtainAccessToken(val uri: Uri?, var sharedPref: SharedPreferences): AsyncTask<Unit, Unit, Boolean>() {
     @SuppressLint("ApplySharedPref", "CommitPrefEdits")
     override fun doInBackground(vararg params: Unit?): Boolean {

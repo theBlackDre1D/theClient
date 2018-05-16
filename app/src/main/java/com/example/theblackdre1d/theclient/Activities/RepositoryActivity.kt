@@ -13,7 +13,9 @@ import com.example.theblackdre1d.theclient.Fragments.PullRequestsFragment
 import com.example.theblackdre1d.theclient.Fragments.ReadmeFragment
 import com.example.theblackdre1d.theclient.R
 import kotlinx.android.synthetic.main.activity_repository.*
-
+/*
+* Activity contains fragments and page addapter for fragments.
+* */
 class RepositoryActivity : AppCompatActivity() {
     var author = ""
     var repoName = ""

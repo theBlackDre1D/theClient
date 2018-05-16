@@ -21,7 +21,9 @@ import com.example.theblackdre1d.theclient.Fragments.GetReposCommits
 import com.example.theblackdre1d.theclient.Models.SavedRepository
 import com.google.gson.Gson
 import com.pixplicity.easyprefs.library.Prefs
-
+/*
+* Class handle synchronization of commits and pull requests.
+* */
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 class ReposSync : JobService() {
 
@@ -29,7 +31,9 @@ class ReposSync : JobService() {
         Log.i("CANCELED", "Job was canceled before finish")
         return true
     }
-
+    /*
+    * Download pullrequests for every repo - if some new are available show notification.
+    * */
     private fun checkNewPullRequests() {
         Log.i("SYNC", "Syncing pull requests")
         val settings = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
@@ -39,7 +43,7 @@ class ReposSync : JobService() {
             var savedRepositories: ArrayList<SavedRepository> = ArrayList()
             var count = 0
             while(count < userRepos!!.size) {
-                val repoName = userRepos[count].name
+//                val repoName = userRepos[count].name
                 val savedRepoInJson = Prefs.getString("${userRepos[count].name}", null)
                 if (savedRepoInJson != null) {
                     val gson = Gson()
@@ -72,7 +76,9 @@ class ReposSync : JobService() {
             }
         }
     }
-
+    /*
+    * Download commits for every repo - if some new are available show notification.
+    * */
     private fun checkNewCommits() {
         Log.i("SYNC", "Syncing commits")
         val settings = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
@@ -82,7 +88,7 @@ class ReposSync : JobService() {
             var savedRepositories: ArrayList<SavedRepository> = ArrayList()
             var count = 0
             while(count < userRepos!!.size) {
-                val repoName = userRepos[count].name //only for debug purposes
+//                val repoName = userRepos[count].name //only for debug purposes
                 val savedRepoInJson = Prefs.getString("${userRepos[count].name}", null)
                 if (savedRepoInJson != null) {
                     val gson = Gson()
@@ -101,8 +107,8 @@ class ReposSync : JobService() {
                             savedRepo = savedRepository
                         }
                     }
-                    val pontentionalyNewCommit = repoCommits.first().commit?.message
-                    val currentLastCommit = savedRepo?.lastCommit?.commit?.message
+//                    val pontentionalyNewCommit = repoCommits.first().commit?.message
+//                    val currentLastCommit = savedRepo?.lastCommit?.commit?.message
                     if (repoCommits.first() != savedRepo?.lastCommit) {
                         Log.i("COMMITS", "creating notifications")
                         //TODO: create notification
@@ -115,7 +121,9 @@ class ReposSync : JobService() {
             }
         }
     }
-
+    /*
+    * Creation notifications - depend on Android version.
+    * */
     @SuppressLint("PrivateResource")
     private fun createNotification(title: String, text: String) {
         val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -151,7 +159,9 @@ class ReposSync : JobService() {
         }
         notificationManager.notify(1234, builder.build())
     }
-
+    /*
+    * Override method with calls of 2 methods that are defined above.
+    * */
     override fun onStartJob(params: JobParameters?): Boolean {
         Log.i("SYNC", "Started background sync")
         checkNewCommits()

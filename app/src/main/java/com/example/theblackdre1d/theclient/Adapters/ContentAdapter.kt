@@ -6,11 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import com.example.theblackdre1d.theclient.Models.GitHubRepoContent
 import com.example.theblackdre1d.theclient.R
 import kotlinx.android.synthetic.main.repo_list_row.view.*
-
+/*
+* RecyclerView adapter for files in repo.
+* */
 class ContentListAdapter(private val items: List<GitHubRepoContent>, val clickListener: (GitHubRepoContent) -> Unit): RecyclerView.Adapter<CodeHolder>()  {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CodeHolder {
         val viewGroup = LayoutInflater.from(parent.context).inflate(R.layout.repo_list_row, parent, false)

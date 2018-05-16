@@ -35,17 +35,21 @@ import khttp.get
 import kotlinx.android.synthetic.main.activity_repo_list.*
 import org.jetbrains.anko.*
 import java.util.*
-
+/*
+* Class handle fetching and showing user repos
+* */
 class RepoListActivity : AppCompatActivity() {
 
+    /*
+    * Check if user is connected to the internet. If not redirect to the network settings.
+    * Scheduling synchronization of commits and pull requests
+    * */
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_repo_list)
         val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = connectivityManager.activeNetworkInfo
-
-        val skipScheduleSync = Prefs.getBoolean("skipScheduleSync", false)
 
         if (networkInfo == null) {
             alert("You have to be connected to proceed") {
@@ -55,13 +59,15 @@ class RepoListActivity : AppCompatActivity() {
             }.show()
         }
         scheduleSync()
-//        if (!skipScheduleSync) {
-//            scheduleSync()
-//
-//        }
-//        Prefs.putBoolean("skipScheduleSync", true)
     }
 
+    /*
+    * Checking internet connection - if connected OK else show alert and redirect to network settings.
+    * Initialization of UI elements.
+    * Request on GitHub server for fetch user information and display profile picture with Picasso library.
+    * Request on GitHub server for user's repositories and display them using RepoListAdapter.kt.
+    * Setting information for sync using saveInformationForSync().
+    * */
     @SuppressLint("CommitPrefEdits")
     override fun onResume() {
         super.onResume()
@@ -102,7 +108,7 @@ class RepoListActivity : AppCompatActivity() {
                     } else {
                         description = repo.description as String
                     }
-                    val repository = Repository(nameOfRepo!!, description, language!!, gitUserDetails.login!!)
+                    val repository = Repository(nameOfRepo!!, description, language!!, gitUserDetails.login)
                     repositoriesList.add(repository)
                 }
                 doAsync {
@@ -122,7 +128,11 @@ class RepoListActivity : AppCompatActivity() {
             }.show()
         }
     }
-
+    /*
+    * One input parameter - list of users's repositories.
+    * Saving last commit and last pull request for every repository. Object saved in JSON format in SharedPreferencies.
+    *
+    * */
     private fun saveInformationForSync(repositories: List<GitHubRepository>, token: String) {
         val userName = Prefs.getString("userName", null)
         val gson = Gson()
@@ -150,24 +160,32 @@ class RepoListActivity : AppCompatActivity() {
             Prefs.putString("${repo.name}", jsonRepo)
         }
     }
-
+    /*
+    * User is redirected to network settings after this method was called.
+    * */
     private fun redirectToSettings() {
         val intent = Intent(Settings.ACTION_WIRELESS_SETTINGS)
         startActivity(intent)
     }
-
+    /*
+    * Closing application.
+    * */
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onBackPressed() {
         moveTaskToBack(true)
     }
-
+    /*
+    * Setting up sync in background thread using AsyncTask.
+    * */
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun scheduleSync() {
         val componentName = ComponentName(this, ReposSync::class.java)
         val scheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
         SetupSync(componentName, scheduler).execute().get()
     }
-
+    /*
+    * Logging out user - delete token from SharedPreferencies and redirect to MainActivity.kt
+    * */
     fun logOut(view: View) {
         alert("Do you wanna log off?") {
             title = "Log off"
@@ -188,6 +206,10 @@ class RepoListActivity : AppCompatActivity() {
 // =====================================================================================================================
 
 // AsyncTask class -> better to declare it in separate file
+/*
+* Request on GitHub server for fetch user repos - Retrofit2 library and Moshi parser.
+* Returning List of repositories objects
+* */
 class GetUserRepos(private val userToken: String?): AsyncTask<Unit, Unit, List<GitHubRepository>?>() {
     override fun doInBackground(vararg params: Unit?): List<GitHubRepository>? {
         val gitHubService = GitHubAPI.create()
@@ -195,7 +217,10 @@ class GetUserRepos(private val userToken: String?): AsyncTask<Unit, Unit, List<G
         return gitRespond
     }
 }
-
+/*
+* Request on GitHub server for fetch user information - khttp library.
+* Return object SimpleUser with 3 atributes - user name (login), avatar url and creation date
+* */
 class GetUserInfo(private val token: String?): AsyncTask<Unit, Unit, SimpleUser>() {
     override fun doInBackground(vararg params: Unit?): SimpleUser {
         try {
@@ -214,7 +239,9 @@ class GetUserInfo(private val token: String?): AsyncTask<Unit, Unit, SimpleUser>
         return SimpleUser("", "", "")
     }
 }
-
+/*
+* AsyncTask class for setup synchronization. Must be in background thread becasue on main it caused blocking main thread and frames skipping
+* */
 class SetupSync(private val component: ComponentName, private val scheduler: JobScheduler): AsyncTask<Unit, Unit, Unit>() {
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun doInBackground(vararg params: Unit?) {

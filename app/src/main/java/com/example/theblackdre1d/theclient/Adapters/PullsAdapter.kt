@@ -8,7 +8,9 @@ import android.widget.TextView
 import com.example.theblackdre1d.theclient.Models.GitHubPullRequest
 import kotlinx.android.synthetic.main.pull_request_item.view.*
 import com.example.theblackdre1d.theclient.R
-
+/*
+* RecyclerView adapter for pull requests.
+* */
 class PullsAdapter(val pulls: List<GitHubPullRequest>): RecyclerView.Adapter<PullsAdapter.PullsHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PullsHolder {
         val viewGroup = LayoutInflater.from(parent.context).inflate(R.layout.pull_request_item, parent, false)
@@ -32,9 +34,4 @@ class PullsAdapter(val pulls: List<GitHubPullRequest>): RecyclerView.Adapter<Pul
         val author = itemView.authorTextView as TextView
         val date = itemView.dateTextView as TextView
     }
-//    class CommitsHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-//        val message = itemView.messageTextView as TextView
-//        val author = itemView.authorTextView as TextView
-//        val date = itemView.dateTextView as TextView
-//    }
 }

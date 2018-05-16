@@ -1,6 +1,8 @@
 package com.example.theblackdre1d.theclient.Models
 import com.squareup.moshi.Json
-
+/*
+* Data class for store information from GitHub server about pull requests.
+* */
 data class GitHubPullRequest (
         @Json(name = "url") val url:                                    String?,
         @Json(name = "id") val id:                                      Int?,

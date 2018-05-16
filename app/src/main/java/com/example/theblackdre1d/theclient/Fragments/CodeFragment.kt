@@ -27,7 +27,6 @@ class CodeFragment(private val userName: String, private val repoName: String, p
     lateinit var table: RecyclerView
     private var branch = "master"
     private val branchesStrings = mutableListOf<String>()
-    //private var homePath: String = ""
     private val previousFolders = ArrayList<String>()
     private var count = 0
 

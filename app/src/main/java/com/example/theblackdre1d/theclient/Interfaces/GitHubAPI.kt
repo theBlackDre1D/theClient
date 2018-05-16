@@ -9,7 +9,9 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
-
+/*
+* Retrofit2 library.
+* */
 interface GitHubAPI {
     @GET("user")
     fun getUser(@Query("access_token") accessToken: String): Call<ResponseBody>

@@ -1,7 +1,9 @@
 package com.example.theblackdre1d.theclient.Models
 
 import com.squareup.moshi.Json
-
+/*
+* Data class for store information from GitHub server about repository.
+* */
 data class GitHubRepository(
         @Json(name = "id") val id:                                      Int?,
         @Json(name = "name") val name:                                  String?,

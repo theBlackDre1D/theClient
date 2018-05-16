@@ -9,7 +9,9 @@ import android.widget.Toast
 import com.example.theblackdre1d.theclient.Models.GitHubCommit
 import com.example.theblackdre1d.theclient.R
 import kotlinx.android.synthetic.main.commit_item.view.*
-
+/*
+* RecyclerView adapter for commits
+* */
 class CommitsAdapter(private val commits: List<GitHubCommit>): RecyclerView.Adapter<CommitsAdapter.CommitsHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommitsHolder {
         val viewGroup = LayoutInflater.from(parent.context).inflate(R.layout.commit_item, parent, false)

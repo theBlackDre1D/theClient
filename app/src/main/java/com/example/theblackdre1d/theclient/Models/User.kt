@@ -1,6 +1,8 @@
 package com.example.theblackdre1d.theclient.Models
 import com.squareup.moshi.Json
-
+/*
+* Data class for store information from GitHub server about user.
+* */
 data class User(
 		@Json(name = "login") val login: 								String?,
 		@Json(name = "id") val id: 										Int?,
@@ -27,5 +29,3 @@ data class User(
 		@Json(name = "created_at") val createdAt: 						String?,
 		@Json(name = "updated_at") val updatedAt: 						String?
 )
-
-//data class Result (val total_count: Int, val incomplete_results: Boolean, val items: List<User>)

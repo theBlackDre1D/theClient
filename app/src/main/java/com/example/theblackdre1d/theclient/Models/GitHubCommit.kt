@@ -1,6 +1,8 @@
 package com.example.theblackdre1d.theclient.Models
 import com.squareup.moshi.Json
-
+/*
+* Data class for store information from GitHub server about commits.
+* */
 data class GitHubCommit (
 		@Json(name = "sha") val sha: 							String?,
 		@Json(name = "commit") val commit: 						Commit?,

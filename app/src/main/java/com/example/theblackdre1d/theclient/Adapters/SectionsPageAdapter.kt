@@ -3,7 +3,9 @@ package com.example.theblackdre1d.theclient.Adapters
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
-
+/*
+* Page adapter for fragments.
+* */
 class ViewPagerAdapater: FragmentPagerAdapter {
 
     private val mFragmentList: MutableList<Fragment> = mutableListOf()

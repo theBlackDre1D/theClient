@@ -1,11 +1,8 @@
 package com.example.theblackdre1d.theclient.Models
 import com.squareup.moshi.Json
-
-
-/**
- * Created by seremtinameno on 28.2.18.
- */
-
+/*
+* Data class for store information from GitHub server about repo content (files).
+* */
 data class GitHubRepoContent(
 		@Json(name = "name") val name:                  String?,
 		@Json(name = "path") val path:                  String?,

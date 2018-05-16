@@ -11,7 +11,9 @@ import com.example.theblackdre1d.theclient.Activities.RepositoryActivity
 import com.example.theblackdre1d.theclient.Models.Repository
 import com.example.theblackdre1d.theclient.R
 import kotlinx.android.synthetic.main.repository_layout.view.*
-
+/*
+* RecyclerView adapter for show repository after log in.
+* */
 class RepoListAdapter(val repositoryList: ArrayList<Repository>) : RecyclerView.Adapter<RepoListAdapter.ViewHolder>() {
     override fun getItemCount(): Int {
         return repositoryList.size

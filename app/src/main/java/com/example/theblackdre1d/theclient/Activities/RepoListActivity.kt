@@ -33,7 +33,10 @@ import com.pixplicity.easyprefs.library.Prefs
 import com.squareup.picasso.Picasso
 import khttp.get
 import kotlinx.android.synthetic.main.activity_repo_list.*
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.*
+import org.jetbrains.anko.coroutines.experimental.bg
 import java.util.*
 /*
 * Class handle fetching and showing user repos
@@ -111,7 +114,10 @@ class RepoListActivity : AppCompatActivity() {
                     val repository = Repository(nameOfRepo!!, description, language!!, gitUserDetails.login)
                     repositoriesList.add(repository)
                 }
-                doAsync {
+//                doAsync {
+//                    saveInformationForSync(gitHubUserRepos, userToken!!)
+//                }
+                launch {
                     saveInformationForSync(gitHubUserRepos, userToken!!)
                 }
             }
@@ -128,6 +134,7 @@ class RepoListActivity : AppCompatActivity() {
             }.show()
         }
     }
+
     /*
     * One input parameter - list of users's repositories.
     * Saving last commit and last pull request for every repository. Object saved in JSON format in SharedPreferencies.
@@ -174,6 +181,7 @@ class RepoListActivity : AppCompatActivity() {
     override fun onBackPressed() {
         moveTaskToBack(true)
     }
+
     /*
     * Setting up sync in background thread using AsyncTask.
     * */
@@ -181,7 +189,8 @@ class RepoListActivity : AppCompatActivity() {
     private fun scheduleSync() {
         val componentName = ComponentName(this, ReposSync::class.java)
         val scheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
-        SetupSync(componentName, scheduler).execute().get()
+        SetupSync(componentName, scheduler).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get()
+
     }
     /*
     * Logging out user - delete token from SharedPreferencies and redirect to MainActivity.kt

@@ -21,6 +21,10 @@ import com.example.theblackdre1d.theclient.Fragments.GetReposCommits
 import com.example.theblackdre1d.theclient.Models.SavedRepository
 import com.google.gson.Gson
 import com.pixplicity.easyprefs.library.Prefs
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
+import org.jetbrains.anko.coroutines.experimental.bg
+
 /*
 * Class handle synchronization of commits and pull requests.
 * */
@@ -32,9 +36,9 @@ class ReposSync : JobService() {
         return true
     }
     /*
-    * Download pullrequests for every repo - if some new are available show notification.
+    * Download pull requests for every repo - if some new are available show notification.
     * */
-    private fun checkNewPullRequests() {
+    suspend private fun checkNewPullRequests() {
         Log.i("SYNC", "Syncing pull requests")
         val settings = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
         val token = settings?.getString("access_token", null)
@@ -79,7 +83,7 @@ class ReposSync : JobService() {
     /*
     * Download commits for every repo - if some new are available show notification.
     * */
-    private fun checkNewCommits() {
+    suspend private fun checkNewCommits() {
         Log.i("SYNC", "Syncing commits")
         val settings = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
         val token = settings?.getString("access_token", null)
@@ -164,8 +168,10 @@ class ReposSync : JobService() {
     * */
     override fun onStartJob(params: JobParameters?): Boolean {
         Log.i("SYNC", "Started background sync")
-        checkNewCommits()
-        checkNewPullRequests()
+        launch {
+            checkNewCommits()
+            checkNewPullRequests()
+        }
         jobFinished(params, false)
         return true
     }

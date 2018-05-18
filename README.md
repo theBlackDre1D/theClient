@@ -28,5 +28,5 @@ https://youtu.be/Bu8XNHZ0mXw
 <img width="200" alt="snimka obrazovky 2018-02-10 o 18 02 34" src="https://user-images.githubusercontent.com/15018356/40235826-bb63fa3c-5aab-11e8-8e34-972e77c9b826.png">  
 </p>
 
-<img width="355" alt="snimka obrazovky 2018-02-10 o 18 02 34" src="https://user-images.githubusercontent.com/15018356/40235684-4e346d48-5aab-11e8-8c7c-6585375a45bf.png">  
+<img width="600" alt="snimka obrazovky 2018-02-10 o 18 02 34" src="https://user-images.githubusercontent.com/15018356/40235684-4e346d48-5aab-11e8-8c7c-6585375a45bf.png">  
 

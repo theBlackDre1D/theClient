@@ -168,6 +168,7 @@ class ReposSync : JobService() {
     * */
     override fun onStartJob(params: JobParameters?): Boolean {
         Log.i("SYNC", "Started background sync")
+        // Kotlin coroutines
         launch {
             checkNewCommits()
             checkNewPullRequests()

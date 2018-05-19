@@ -6,28 +6,6 @@
     android:layout_height="match_parent"
     tools:context="com.example.theblackdre1d.theclient.Activities.RepositoryActivity">
 
-    <!--<android.support.design.widget.FloatingActionButton-->
-        <!--android:id="@+id/backFloatingButton"-->
-        <!--android:layout_width="56dp"-->
-        <!--android:layout_height="56dp"-->
-        <!--android:layout_marginBottom="8dp"-->
-        <!--android:layout_marginEnd="8dp"-->
-        <!--android:layout_marginLeft="8dp"-->
-        <!--android:layout_marginRight="8dp"-->
-        <!--android:layout_marginStart="8dp"-->
-        <!--android:layout_marginTop="8dp"-->
-        <!--android:clickable="true"-->
-        <!--android:src="?attr/actionModeCloseDrawable"-->
-        <!--android:visibility="gone"-->
-        <!--app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--app:layout_constraintEnd_toEndOf="parent"-->
-        <!--app:layout_constraintHorizontal_bias="0.949"-->
-        <!--app:layout_constraintStart_toStartOf="parent"-->
-        <!--app:layout_constraintTop_toTopOf="parent"-->
-        <!--app:layout_constraintVertical_bias="0.986"-->
-        <!--android:focusable="true" />-->
-    <!--app:srcCompat="?attr/actionModeCloseDrawable" -->
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/tableRecyclerView"
         android:layout_width="407dp"
@@ -51,14 +29,10 @@
         android:id="@+id/branchPickSpinner"
         android:layout_width="277dp"
         android:layout_height="45dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:animationCache="true"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.119"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

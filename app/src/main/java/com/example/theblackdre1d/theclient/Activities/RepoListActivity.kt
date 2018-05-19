@@ -111,7 +111,7 @@ class RepoListActivity : AppCompatActivity() {
                     } else {
                         description = repo.description as String
                     }
-                    val repository = Repository(nameOfRepo!!, description, language!!, gitUserDetails.login)
+                    val repository = Repository(nameOfRepo ?: "No-name", description, language ?: "-", gitUserDetails.login)
                     repositoriesList.add(repository)
                 }
 //                doAsync {
@@ -249,7 +249,7 @@ class GetUserInfo(private val token: String?): AsyncTask<Unit, Unit, SimpleUser>
     }
 }
 /*
-* AsyncTask class for setup synchronization. Must be in background thread becasue on main it caused blocking main thread and frames skipping
+* AsyncTask class for setup synchronization. Must be in background thread because on main it caused blocking main thread and frames skipping
 * */
 class SetupSync(private val component: ComponentName, private val scheduler: JobScheduler): AsyncTask<Unit, Unit, Unit>() {
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)

@@ -32,7 +32,6 @@ import com.example.theblackdre1d.theclient.Interfaces.GitHubAPI
 import com.example.theblackdre1d.theclient.Models.*
 import com.example.theblackdre1d.theclient.R
 import com.example.theblackdre1d.theclient.ReposSync
-import com.example.theblackdre1d.theclient.Token
 import com.github.pwittchen.reactivenetwork.library.rx2.ConnectivityPredicate
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.gson.Gson

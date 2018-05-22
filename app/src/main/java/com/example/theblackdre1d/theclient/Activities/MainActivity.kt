@@ -1,7 +1,6 @@
 package com.example.theblackdre1d.theclient.Activities
 
 import android.annotation.SuppressLint
-import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -14,9 +13,6 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
-import com.android.volley.Response
-import com.android.volley.toolbox.JsonObjectRequest
-import com.android.volley.toolbox.Volley
 import com.example.theblackdre1d.theclient.Java.VideoViewOnPrepared
 import com.example.theblackdre1d.theclient.R
 import com.example.theblackdre1d.theclient.Token
@@ -29,7 +25,6 @@ import khttp.post
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.yesButton
-import org.json.JSONObject
 
 /*
 * First activity after first launch.

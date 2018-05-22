@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.os.AsyncTask
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
@@ -21,6 +22,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import com.example.theblackdre1d.theclient.Adapters.RepoListAdapter
 import com.example.theblackdre1d.theclient.Fragments.GetRepoPulls
 import com.example.theblackdre1d.theclient.Fragments.GetReposCommits
@@ -28,16 +30,19 @@ import com.example.theblackdre1d.theclient.Interfaces.GitHubAPI
 import com.example.theblackdre1d.theclient.Models.*
 import com.example.theblackdre1d.theclient.R
 import com.example.theblackdre1d.theclient.ReposSync
+import com.github.pwittchen.reactivenetwork.library.rx2.ConnectivityPredicate
+import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.gson.Gson
 import com.pixplicity.easyprefs.library.Prefs
 import com.squareup.picasso.Picasso
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import khttp.get
 import kotlinx.android.synthetic.main.activity_repo_list.*
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.*
-import org.jetbrains.anko.coroutines.experimental.bg
 import java.util.*
+
 /*
 * Class handle fetching and showing user repos
 * */
@@ -51,17 +56,26 @@ class RepoListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_repo_list)
-        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val networkInfo = connectivityManager.activeNetworkInfo
 
-        if (networkInfo == null) {
-            alert("You have to be connected to proceed") {
-                yesButton({
-                    redirectToSettings()
-                })
-            }.show()
-        }
         scheduleSync()
+
+        ReactiveNetwork.observeNetworkConnectivity(applicationContext)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .filter(ConnectivityPredicate.hasState(NetworkInfo.State.DISCONNECTED))
+                .subscribe {
+                    alert("You have to be connected to proceed") {
+                        title = "Not connected!"
+                        positiveButton("Go to settings") {
+                            redirectToSettings()
+                            Prefs.putBoolean("notified", true)
+                        }
+                        negativeButton("Cancel") {
+                            // do nothing
+                            Prefs.putBoolean("notified", true)
+                        }
+                    }.show()
+                }
     }
 
     /*
@@ -88,16 +102,26 @@ class RepoListActivity : AppCompatActivity() {
             // Shared preferences initialization
             val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
             val userToken: String? = sharedPreferences.getString("access_token",null)
-            val syncPreferences = application.getSharedPreferences("sync", Context.MODE_PRIVATE)
-            val prefsEditor = syncPreferences.edit()
+
             // ==== Obtaining information from GitHub ====
             // Obtain user details
             val gitUserDetails = GetUserInfo(userToken).execute().get()
-            gitUserDetails?.let {
-                userName.text = gitUserDetails.login
-                createdAt.text = gitUserDetails.createdAt
-                Picasso.with(applicationContext).load(gitUserDetails.avatarUrl).into(profilePicture)
-                Prefs.putString("userName", gitUserDetails.login)
+            if (gitUserDetails.avatarUrl == "") {
+                Prefs.putBoolean("skip", false)
+                Prefs.putBoolean("skipScheduleSync", false)
+                val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
+                sharedPreferences.edit().remove("access_token").apply()
+                super.onBackPressed()
+            }
+            try {
+                gitUserDetails?.let {
+                    userName.text = gitUserDetails.login
+                    createdAt.text = gitUserDetails.createdAt
+                    Picasso.with(applicationContext).load(gitUserDetails.avatarUrl).into(profilePicture)
+                    Prefs.putString("userName", gitUserDetails.login)
+                }
+            } catch (exception: Exception) {
+                Toast.makeText(applicationContext, "Error while loading user information", Toast.LENGTH_SHORT).show()
             }
             // ==== Obtain user repos ===
             val gitHubUserRepos = GetUserRepos(userToken).execute().get()
@@ -114,9 +138,7 @@ class RepoListActivity : AppCompatActivity() {
                     val repository = Repository(nameOfRepo ?: "No-name", description, language ?: "-", gitUserDetails.login)
                     repositoriesList.add(repository)
                 }
-//                doAsync {
-//                    saveInformationForSync(gitHubUserRepos, userToken!!)
-//                }
+
                 launch {
                     saveInformationForSync(gitHubUserRepos, userToken!!)
                 }
@@ -124,14 +146,6 @@ class RepoListActivity : AppCompatActivity() {
             // ==== Creating table ====
             val repositoriesAdapter = RepoListAdapter(repositoriesList)
             repositoriesTable.adapter = repositoriesAdapter
-        }
-
-        if (networkInfo == null) {
-            alert("You have to be connected to proceed") {
-                yesButton{
-                    redirectToSettings()
-                }
-            }.show()
         }
     }
 

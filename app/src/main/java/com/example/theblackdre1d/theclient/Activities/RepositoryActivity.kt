@@ -1,9 +1,12 @@
 package com.example.theblackdre1d.theclient.Activities
 
 import android.content.Context
+import android.content.Intent
+import android.net.NetworkInfo
 import android.support.design.widget.TabLayout
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings
 import android.support.v4.view.ViewPager
 import android.support.v7.widget.Toolbar
 import com.example.theblackdre1d.theclient.Adapters.ViewPagerAdapater
@@ -12,7 +15,14 @@ import com.example.theblackdre1d.theclient.Fragments.CommitsFragment
 import com.example.theblackdre1d.theclient.Fragments.PullRequestsFragment
 import com.example.theblackdre1d.theclient.Fragments.ReadmeFragment
 import com.example.theblackdre1d.theclient.R
+import com.github.pwittchen.reactivenetwork.library.rx2.ConnectivityPredicate
+import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
+import com.pixplicity.easyprefs.library.Prefs
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_repository.*
+import org.jetbrains.anko.alert
+
 /*
 * Activity contains fragments and page addapter for fragments.
 * */
@@ -36,6 +46,24 @@ class RepositoryActivity : AppCompatActivity() {
         setupViewPager(viewPager)
         val tabLayout = tabs as TabLayout
         tabLayout.setupWithViewPager(viewPager)
+
+        ReactiveNetwork.observeNetworkConnectivity(applicationContext)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .filter(ConnectivityPredicate.hasState(NetworkInfo.State.DISCONNECTED))
+                .subscribe {
+                    alert("You have to be connected to proceed") {
+                        title = "Not connected!"
+                        positiveButton("Go to settings") {
+                            redirectToSettings()
+                            Prefs.putBoolean("notified", true)
+                        }
+                        negativeButton("Cancel") {
+                            // do nothing
+                            Prefs.putBoolean("notified", true)
+                        }
+                    }.show()
+                }
     }
 
     private fun setupViewPager(viewPager: ViewPager) {
@@ -47,5 +75,10 @@ class RepositoryActivity : AppCompatActivity() {
         adapter.addFragment(CodeFragment(author, repoName, token!!), "Codes")
         adapter.addFragment(PullRequestsFragment(author, repoName), "Pull Requests")
         viewPager.adapter = adapter
+    }
+
+    private fun redirectToSettings() {
+        val intent = Intent(Settings.ACTION_WIRELESS_SETTINGS)
+        startActivity(intent)
     }
 }

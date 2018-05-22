@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Typeface
 import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.net.Uri
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
@@ -15,7 +16,11 @@ import android.util.Log
 import com.example.theblackdre1d.theclient.Java.VideoViewOnPrepared
 import com.example.theblackdre1d.theclient.R
 import com.example.theblackdre1d.theclient.Token
+import com.github.pwittchen.reactivenetwork.library.rx2.ConnectivityPredicate
+import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.pixplicity.easyprefs.library.Prefs
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import khttp.post
 import org.jetbrains.anko.alert
@@ -43,6 +48,23 @@ class MainActivity : AppCompatActivity() {
                 .setUseDefaultSharedPreference(true)
                 .build()
 
+        ReactiveNetwork.observeNetworkConnectivity(applicationContext)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .filter(ConnectivityPredicate.hasState(NetworkInfo.State.DISCONNECTED))
+                .subscribe {
+                    alert("You have to be connected to proceed") {
+                        title = "Not connected!"
+                        positiveButton("Go to settings") {
+                            redirectToSettings()
+                            Prefs.putBoolean("notified", true)
+                        }
+                        negativeButton("Cancel") {
+                            // do nothing
+                            Prefs.putBoolean("notified", true)
+                        }
+                    }.show()
+                }
 //        if (token != null) {
 //            val intent = Intent(this, RepoListActivity::class.java)
 //            startActivity(intent)
@@ -74,6 +96,12 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    private fun redirectToSettings() {
+        val intent = Intent(Settings.ACTION_WIRELESS_SETTINGS)
+        startActivity(intent)
+    }
+
     /*
     * Initialization of UI elements and background video.
     * If token is already in SharedPreferencies redirect to RepoListActivity.kt.
@@ -84,7 +112,7 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
         val token: String? = sharedPreferences.getString("access_token",null)
-        token?.let {
+        if (token != null) {
             val intent = Intent(this, RepoListActivity::class.java)
             startActivity(intent)
         }

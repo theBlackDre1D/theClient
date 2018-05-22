@@ -1,13 +1,23 @@
 package com.example.theblackdre1d.theclient.Activities
 
+import android.content.Intent
+import android.net.NetworkInfo
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings
 import com.example.theblackdre1d.theclient.Models.GitHubRepoContent
 import com.example.theblackdre1d.theclient.R
+import com.github.pwittchen.reactivenetwork.library.rx2.ConnectivityPredicate
+import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.gson.Gson
 import com.pddstudio.highlightjs.HighlightJsView
+import com.pixplicity.easyprefs.library.Prefs
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_file.*
+import org.jetbrains.anko.alert
+
 /*
 * Activity use HighlightJsView for show text or code with highlited code.
 * One request on GitHub server for fetch file content.
@@ -30,6 +40,29 @@ class FileActivity : AppCompatActivity() {
 
         val codeView = codeView as HighlightJsView
         codeView.setSource(file)
+
+        ReactiveNetwork.observeNetworkConnectivity(applicationContext)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .filter(ConnectivityPredicate.hasState(NetworkInfo.State.DISCONNECTED))
+                .subscribe {
+                    alert("You have to be connected to proceed") {
+                        title = "Not connected!"
+                        positiveButton("Go to settings") {
+                            redirectToSettings()
+                            Prefs.putBoolean("notified", true)
+                        }
+                        negativeButton("Cancel") {
+                            // do nothing
+                            Prefs.putBoolean("notified", true)
+                        }
+                    }.show()
+                }
+    }
+
+    private fun redirectToSettings() {
+        val intent = Intent(Settings.ACTION_WIRELESS_SETTINGS)
+        startActivity(intent)
     }
 }
 /*

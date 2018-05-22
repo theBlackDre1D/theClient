@@ -80,8 +80,10 @@ class ReposSync : JobService() {
                     }
                 }
             }
-        } catch (exception: Exception) {
+        } catch (exception: NullPointerException) {
             createNotification("Sync problem", "Please re-login to theClient application.")
+        } catch (exception: Exception) {
+            // unexpected problem nothing to do for now
         }
     }
     /*
@@ -129,8 +131,10 @@ class ReposSync : JobService() {
                     }
                 }
             }
-        } catch (exception: Exception) {
+        } catch (exception: NullPointerException) {
             createNotification("Sync problem", "Please re-login to theClient application.")
+        } catch (exception: Exception) {
+            // unexpected problem nothing to do for now
         }
 
     }

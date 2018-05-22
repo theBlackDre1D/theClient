@@ -8,7 +8,7 @@ Download .apk: https://github.com/theBlackDre1D/theClient/releases
 
   
 To see the app you can watch short demo:  
-https://youtu.be/Bu8XNHZ0mXw
+https://youtu.be/ec42zXLfBF0
   
 ## Screenshots  
 <p float="center">

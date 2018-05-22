@@ -51,6 +51,9 @@ class CodeFragment(private val userName: String, private val repoName: String, p
                 val backPath = buildString()
                 val previousFiles = GetRepoContent(userName, repoName, token, backPath, branch).execute().get()
                 val contentAdapter = ContentListAdapter(previousFiles, { row: GitHubRepoContent -> rowClicked(row) })
+                val controller: LayoutAnimationController = AnimationUtils.loadLayoutAnimation(context, R.anim.layout_from_right)
+                table.layoutAnimation = controller
+                table.scheduleLayoutAnimation()
                 table.adapter = contentAdapter
                 table.invalidate() // this refresh table intent
                 count--
@@ -87,6 +90,9 @@ class CodeFragment(private val userName: String, private val repoName: String, p
             if (potentialNewFiles.isNotEmpty()) {
                 count++
                 val contentAdapter = ContentListAdapter(potentialNewFiles, { row: GitHubRepoContent -> rowClicked(row) })
+                val controller: LayoutAnimationController = AnimationUtils.loadLayoutAnimation(context, R.anim.layout_from_right)
+                table.layoutAnimation = controller
+                table.scheduleLayoutAnimation()
                 table.adapter = contentAdapter
                 table.invalidate() // this refresh table intent
             } else {

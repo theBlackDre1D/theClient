@@ -39,91 +39,100 @@ class ReposSync : JobService() {
     * Download pull requests for every repo - if some new are available show notification.
     * */
     suspend private fun checkNewPullRequests() {
-        Log.i("SYNC", "Syncing pull requests")
-        val settings = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
-        val token = settings?.getString("access_token", null)
-        token?.let {
-            val userRepos = GetUserRepos(token).execute().get()
-            var savedRepositories: ArrayList<SavedRepository> = ArrayList()
-            var count = 0
-            while(count < userRepos!!.size) {
+        try {
+            Log.i("SYNC", "Syncing pull requests")
+            val settings = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
+            val token = settings?.getString("access_token", null)
+            token?.let {
+                val userRepos = GetUserRepos(token).execute().get()
+                var savedRepositories: ArrayList<SavedRepository> = ArrayList()
+                var count = 0
+                while(count < userRepos!!.size) {
 //                val repoName = userRepos[count].name
-                val savedRepoInJson = Prefs.getString("${userRepos[count].name}", null)
-                if (savedRepoInJson != null) {
-                    val gson = Gson()
-                    val savedRepo = gson.fromJson<SavedRepository>(savedRepoInJson, SavedRepository::class.java)
-                    savedRepositories.add(savedRepo)
-                    count++
+                    val savedRepoInJson = Prefs.getString("${userRepos[count].name}", null)
+                    if (savedRepoInJson != null) {
+                        val gson = Gson()
+                        val savedRepo = gson.fromJson<SavedRepository>(savedRepoInJson, SavedRepository::class.java)
+                        savedRepositories.add(savedRepo)
+                        count++
+                    }
                 }
-            }
-            //val syncPreferences = application.getSharedPreferences("sync", Context.MODE_PRIVATE)
-            val userName = Prefs.getString("userName", null)
-            userRepos.forEach { repo ->
-                //TODO FInd why ap crash here
-                val pullRequests = GetRepoPulls(userName!!, repo.name!!, token).execute().get()
-                if (pullRequests!!.isNotEmpty()) {
-                    var savedRepo: SavedRepository? = null
-                    savedRepositories.forEach { savedRepository ->
-                        if (repo.name == savedRepository.repositoryName) {
-                            savedRepo = savedRepository
+                //val syncPreferences = application.getSharedPreferences("sync", Context.MODE_PRIVATE)
+                val userName = Prefs.getString("userName", null)
+                userRepos.forEach { repo ->
+                    //TODO FInd why ap crash here
+                    val pullRequests = GetRepoPulls(userName!!, repo.name!!, token).execute().get()
+                    if (pullRequests!!.isNotEmpty()) {
+                        var savedRepo: SavedRepository? = null
+                        savedRepositories.forEach { savedRepository ->
+                            if (repo.name == savedRepository.repositoryName) {
+                                savedRepo = savedRepository
+                            }
+                        }
+                        if (pullRequests.last() != savedRepo?.lastPullRequest) {
+                            //TODO Create notification
+                            Log.i("PULLS", "creating notifications")
+                            createNotification(
+                                    "New pull request in ${repo.name}",
+                                    "You have new pull request in you repository!"
+                            )
                         }
                     }
-                    if (pullRequests.last() != savedRepo?.lastPullRequest) {
-                        //TODO Create notification
-                        Log.i("PULLS", "creating notifications")
-                        createNotification(
-                                "New pull request in ${repo.name}",
-                                "You have new pull request in you repository!"
-                        )
-                    }
                 }
             }
+        } catch (exception: Exception) {
+            createNotification("Sync problem", "Please re-login to theClient application.")
         }
     }
     /*
     * Download commits for every repo - if some new are available show notification.
     * */
     suspend private fun checkNewCommits() {
-        Log.i("SYNC", "Syncing commits")
-        val settings = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
-        val token = settings?.getString("access_token", null)
-        token?.let {
-            val userRepos = GetUserRepos(token).execute().get()
-            var savedRepositories: ArrayList<SavedRepository> = ArrayList()
-            var count = 0
-            while(count < userRepos!!.size) {
+        try {
+            Log.i("SYNC", "Syncing commits")
+            val settings = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
+            val token = settings?.getString("access_token", null)
+            token?.let {
+                val userRepos = GetUserRepos(token).execute().get()
+                var savedRepositories: ArrayList<SavedRepository> = ArrayList()
+                var count = 0
+                while(count < userRepos!!.size) {
 //                val repoName = userRepos[count].name //only for debug purposes
-                val savedRepoInJson = Prefs.getString("${userRepos[count].name}", null)
-                if (savedRepoInJson != null) {
-                    val gson = Gson()
-                    val savedRepo = gson.fromJson<SavedRepository>(savedRepoInJson, SavedRepository::class.java)
-                    savedRepositories.add(savedRepo)
-                    count++
-                }
-            }
-            val userName = Prefs.getString("userName", null)
-            userRepos.forEach { repo ->
-                val repoCommits = GetReposCommits(token, userName, repo.name!!).execute().get()
-                if (repoCommits.isNotEmpty()) {
-                    var savedRepo: SavedRepository? = null
-                    savedRepositories.forEach { savedRepository ->
-                        if (repo.name == savedRepository.repositoryName) {
-                            savedRepo = savedRepository
-                        }
+                    val savedRepoInJson = Prefs.getString("${userRepos[count].name}", null)
+                    if (savedRepoInJson != null) {
+                        val gson = Gson()
+                        val savedRepo = gson.fromJson<SavedRepository>(savedRepoInJson, SavedRepository::class.java)
+                        savedRepositories.add(savedRepo)
+                        count++
                     }
+                }
+                val userName = Prefs.getString("userName", null)
+                userRepos.forEach { repo ->
+                    val repoCommits = GetReposCommits(token, userName, repo.name!!).execute().get()
+                    if (repoCommits.isNotEmpty()) {
+                        var savedRepo: SavedRepository? = null
+                        savedRepositories.forEach { savedRepository ->
+                            if (repo.name == savedRepository.repositoryName) {
+                                savedRepo = savedRepository
+                            }
+                        }
 //                    val pontentionalyNewCommit = repoCommits.first().commit?.message
 //                    val currentLastCommit = savedRepo?.lastCommit?.commit?.message
-                    if (repoCommits.first() != savedRepo?.lastCommit) {
-                        Log.i("COMMITS", "creating notifications")
-                        //TODO: create notification
-                        createNotification(
-                                "New commit/s in ${repo.name}",
-                                "You have new commit/s in your repository!"
-                        )
+                        if (repoCommits.first() != savedRepo?.lastCommit) {
+                            Log.i("COMMITS", "creating notifications")
+                            //TODO: create notification
+                            createNotification(
+                                    "New commit/s in ${repo.name}",
+                                    "You have new commit/s in your repository!"
+                            )
+                        }
                     }
                 }
             }
+        } catch (exception: Exception) {
+            createNotification("Sync problem", "Please re-login to theClient application.")
         }
+
     }
     /*
     * Creation notifications - depend on Android version.

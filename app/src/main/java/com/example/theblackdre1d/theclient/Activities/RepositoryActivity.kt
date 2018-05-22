@@ -56,7 +56,6 @@ class RepositoryActivity : AppCompatActivity() {
                         title = "Not connected!"
                         positiveButton("Go to settings") {
                             redirectToSettings()
-                            Prefs.putBoolean("notified", true)
                         }
                         negativeButton("Cancel") {
                             // do nothing

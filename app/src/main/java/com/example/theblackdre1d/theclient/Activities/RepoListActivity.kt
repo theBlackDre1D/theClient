@@ -19,6 +19,8 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
+import android.view.animation.AnimationUtils
+import android.view.animation.LayoutAnimationController
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -30,6 +32,7 @@ import com.example.theblackdre1d.theclient.Interfaces.GitHubAPI
 import com.example.theblackdre1d.theclient.Models.*
 import com.example.theblackdre1d.theclient.R
 import com.example.theblackdre1d.theclient.ReposSync
+import com.example.theblackdre1d.theclient.Token
 import com.github.pwittchen.reactivenetwork.library.rx2.ConnectivityPredicate
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.gson.Gson
@@ -68,7 +71,6 @@ class RepoListActivity : AppCompatActivity() {
                         title = "Not connected!"
                         positiveButton("Go to settings") {
                             redirectToSettings()
-                            Prefs.putBoolean("notified", true)
                         }
                         negativeButton("Cancel") {
                             // do nothing
@@ -101,33 +103,49 @@ class RepoListActivity : AppCompatActivity() {
             val repositoriesList = ArrayList<Repository>()
             // Shared preferences initialization
             val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
-            val userToken: String? = sharedPreferences.getString("access_token",null)
-
+            val userToken: String = sharedPreferences.getString("access_token",null)
             // ==== Obtaining information from GitHub ====
             // Obtain user details
-            val gitUserDetails = GetUserInfo(userToken).execute().get()
-            if (gitUserDetails.avatarUrl == "") {
-                Prefs.putBoolean("skip", false)
-                Prefs.putBoolean("skipScheduleSync", false)
-                val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
-                sharedPreferences.edit().remove("access_token").apply()
-                super.onBackPressed()
-            }
-            try {
-                gitUserDetails?.let {
-                    userName.text = gitUserDetails.login
-                    createdAt.text = gitUserDetails.createdAt
-                    Picasso.with(applicationContext).load(gitUserDetails.avatarUrl).into(profilePicture)
-                    Prefs.putString("userName", gitUserDetails.login)
+            var name = Prefs.getString("userName", null)
+            var avatarUrl = Prefs.getString("avatarUrl", null)
+            var createdDate = Prefs.getString("createdAt", null)
+            if (name == null || avatarUrl == null || createdDate == null) {
+                val gitUserDetails = GetUserInfo(userToken).execute().get()
+                if (gitUserDetails.login == "") {
+                    Toast.makeText(applicationContext, "You have to re-login.", Toast.LENGTH_SHORT).show()
+                    Prefs.putBoolean("skip", false)
+                    Prefs.putBoolean("skipScheduleSync", false)
+                    val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
+                    sharedPreferences.edit().remove("access_token").apply()
+                    nullUserDetails()
+                    super.onBackPressed()
                 }
-            } catch (exception: Exception) {
-                Toast.makeText(applicationContext, "Error while loading user information", Toast.LENGTH_SHORT).show()
+                name = gitUserDetails.login
+                avatarUrl = gitUserDetails.avatarUrl
+                createdDate = gitUserDetails.createdAt
+                try {
+                    gitUserDetails?.let {
+                        userName.text = name
+                        createdAt.text = createdDate
+                        Picasso.with(applicationContext).load(avatarUrl).into(profilePicture)
+                        Prefs.putString("userName", name)
+                        Prefs.putString("avatarUrl", avatarUrl)
+                        Prefs.putString("createdAt", createdDate)
+                    }
+                } catch (exception: Exception) {
+                    Toast.makeText(applicationContext, "Error while loading user information", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                userName.text = name
+                createdAt.text = createdDate
+                Picasso.with(applicationContext).load(avatarUrl).into(profilePicture)
             }
+
             // ==== Obtain user repos ===
             val gitHubUserRepos = GetUserRepos(userToken).execute().get()
             if (gitHubUserRepos != null) {
                 for (repo in gitHubUserRepos) {
-                    var description: String
+                    var description: String?
                     val nameOfRepo = repo.name
                     val language = repo.language
                     if (repo.description == null) {
@@ -135,16 +153,28 @@ class RepoListActivity : AppCompatActivity() {
                     } else {
                         description = repo.description as String
                     }
-                    val repository = Repository(nameOfRepo ?: "No-name", description, language ?: "-", gitUserDetails.login)
+                    val repository = Repository(nameOfRepo ?: "No-name", description, language ?: "-", name)
                     repositoriesList.add(repository)
                 }
 
                 launch {
                     saveInformationForSync(gitHubUserRepos, userToken!!)
                 }
+            } else {
+                Toast.makeText(applicationContext, "You have to re-login.", Toast.LENGTH_SHORT).show()
+                Prefs.putBoolean("skip", false)
+                Prefs.putBoolean("skipScheduleSync", false)
+                val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
+                sharedPreferences.edit().remove("access_token").apply()
+                nullUserDetails()
+                super.onBackPressed()
             }
             // ==== Creating table ====
             val repositoriesAdapter = RepoListAdapter(repositoriesList)
+            val context = repositoriesTable.context
+            val controller: LayoutAnimationController = AnimationUtils.loadLayoutAnimation(context, R.anim.layout_from_right)
+            repositoriesTable.layoutAnimation = controller
+            repositoriesTable.scheduleLayoutAnimation()
             repositoriesTable.adapter = repositoriesAdapter
         }
     }
@@ -217,6 +247,7 @@ class RepoListActivity : AppCompatActivity() {
                 Prefs.putBoolean("skipScheduleSync", false)
                 val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
                 sharedPreferences.edit().remove("access_token").apply()
+                nullUserDetails()
                 super.onBackPressed()
             }
             noButton {
@@ -224,6 +255,12 @@ class RepoListActivity : AppCompatActivity() {
             }
         }.show()
         Prefs.putBoolean("skip", false)
+    }
+
+    fun nullUserDetails() {
+        Prefs.putString("userName", null)
+        Prefs.putString("avatarUrl", null)
+        Prefs.putString("createdAt", null)
     }
 }
 // =====================================================================================================================
@@ -235,6 +272,7 @@ class RepoListActivity : AppCompatActivity() {
 * */
 class GetUserRepos(private val userToken: String?): AsyncTask<Unit, Unit, List<GitHubRepository>?>() {
     override fun doInBackground(vararg params: Unit?): List<GitHubRepository>? {
+        Log.i("TOKEN", userToken)
         val gitHubService = GitHubAPI.create()
         val gitRespond = gitHubService.getUserRepos(userToken!!).execute().body()
         return gitRespond
@@ -246,6 +284,7 @@ class GetUserRepos(private val userToken: String?): AsyncTask<Unit, Unit, List<G
 * */
 class GetUserInfo(private val token: String?): AsyncTask<Unit, Unit, SimpleUser>() {
     override fun doInBackground(vararg params: Unit?): SimpleUser {
+        Log.i("TOKEN", token)
         try {
             //val (request, response, result) = "https://api.github.com/user?access_token=$token".httpGet().responseString() // result is Result<String, FuelError>
             val response = get("https://api.github.com/user?access_token=$token")

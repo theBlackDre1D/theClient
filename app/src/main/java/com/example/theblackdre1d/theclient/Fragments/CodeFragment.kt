@@ -11,6 +11,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
+import android.view.animation.LayoutAnimationController
 import android.widget.*
 import com.example.theblackdre1d.theclient.Activities.FileActivity
 import com.example.theblackdre1d.theclient.Adapters.ContentListAdapter
@@ -38,6 +40,9 @@ class CodeFragment(private val userName: String, private val repoName: String, p
         val context =  container!!.context
         table.layoutManager = LinearLayoutManager(context, LinearLayout.VERTICAL, false)
         val contentAdapter = ContentListAdapter(repoFiles, { row: GitHubRepoContent -> rowClicked(row) })
+        val controller: LayoutAnimationController = AnimationUtils.loadLayoutAnimation(context, R.anim.layout_from_right)
+        table.layoutAnimation = controller
+        table.scheduleLayoutAnimation()
         table.adapter = contentAdapter
 
         val backButton = rootView.backButton as Button

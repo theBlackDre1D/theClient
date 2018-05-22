@@ -1,6 +1,7 @@
 package com.example.theblackdre1d.theclient.Activities
 
 import android.annotation.SuppressLint
+import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -13,6 +14,9 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
+import com.android.volley.Response
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
 import com.example.theblackdre1d.theclient.Java.VideoViewOnPrepared
 import com.example.theblackdre1d.theclient.R
 import com.example.theblackdre1d.theclient.Token
@@ -21,10 +25,12 @@ import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.pixplicity.easyprefs.library.Prefs
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_main.*
 import khttp.post
+import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.yesButton
+import org.json.JSONObject
+
 /*
 * First activity after first launch.
 * Initializing Prefs library - easy SharedPreferencies manipulation
@@ -126,7 +132,7 @@ class MainActivity : AppCompatActivity() {
 //            skipMainActivity = true
             val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
             val uri: Uri? = intent.data
-            val tokenObtained: Boolean = ObtainAccessToken(uri, sharedPreferences).execute().get()
+            val tokenObtained: Boolean = ObtainAccessToken(uri, sharedPreferences, this).execute().get()
             if (tokenObtained) {
                 val intent = Intent(this, RepoListActivity::class.java)
                 startActivity(intent)
@@ -146,7 +152,7 @@ class MainActivity : AppCompatActivity() {
 * Post request on GitGub server for obtain access token and store it in shared preferencies.
 * Prefs not working here :(
 * */
-class ObtainAccessToken(val uri: Uri?, var sharedPref: SharedPreferences): AsyncTask<Unit, Unit, Boolean>() {
+class ObtainAccessToken(val uri: Uri?, var sharedPref: SharedPreferences, val context: Context): AsyncTask<Unit, Unit, Boolean>() {
     @SuppressLint("ApplySharedPref", "CommitPrefEdits")
     override fun doInBackground(vararg params: Unit?): Boolean {
         val clientID = Token.clientID
@@ -161,8 +167,8 @@ class ObtainAccessToken(val uri: Uri?, var sharedPref: SharedPreferences): Async
                 val content = response.jsonObject
                 val accessToken = content.getString("access_token")
                 Log.i("Token", accessToken)
-              //  Log.d("Token", accessToken)
-               // Prefs.putString("access_token",accessToken)
+                //  Log.d("Token", accessToken)
+                // Prefs.putString("access_token",accessToken)
                 sharedPref.edit().apply {
                     putString("access_token",accessToken)
                     commit()
@@ -170,6 +176,7 @@ class ObtainAccessToken(val uri: Uri?, var sharedPref: SharedPreferences): Async
                 return true
             }
         }
+        Prefs.putBoolean("skip", false)
         return false
     }
 }

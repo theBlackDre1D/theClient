@@ -257,7 +257,7 @@ class RepoListActivity : AppCompatActivity() {
         Prefs.putBoolean("skip", false)
     }
 
-    fun nullUserDetails() {
+    private fun nullUserDetails() {
         Prefs.putString("userName", null)
         Prefs.putString("avatarUrl", null)
         Prefs.putString("createdAt", null)

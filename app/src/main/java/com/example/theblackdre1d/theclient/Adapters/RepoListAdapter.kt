@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.repository_layout.view.*
 /*
 * RecyclerView adapter for show repository after log in.
 * */
-class RepoListAdapter(val repositoryList: ArrayList<Repository>) : RecyclerView.Adapter<RepoListAdapter.ViewHolder>() {
+class RepoListAdapter(private val repositoryList: ArrayList<Repository>) : RecyclerView.Adapter<RepoListAdapter.ViewHolder>() {
     override fun getItemCount(): Int {
         return repositoryList.size
     }
@@ -25,7 +25,7 @@ class RepoListAdapter(val repositoryList: ArrayList<Repository>) : RecyclerView.
         holder.headerTextView.text = repository.name
         holder.subheaderTextView.text = repository.description
         holder.languageTextView.text = repository.language
-        holder.accountTextView.text = repository.account
+//        holder.accountTextView.text = repository.account
         holder.itemView.setOnClickListener {
             Log.d("CLICKED: ", "You clicked at me! :)")
             val intent = Intent(holder.itemView.context, RepositoryActivity::class.java)
@@ -44,6 +44,6 @@ class RepoListAdapter(val repositoryList: ArrayList<Repository>) : RecyclerView.
         val headerTextView = itemView.repoName as TextView
         val subheaderTextView = itemView.repoDescription as TextView
         val languageTextView = itemView.languageTextView as TextView
-        val accountTextView = itemView.accountHiddenTextView as TextView
+//        val accountTextView = itemView.accountHiddenTextView as TextView
     }
 }

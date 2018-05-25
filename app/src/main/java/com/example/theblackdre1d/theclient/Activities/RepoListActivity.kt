@@ -59,7 +59,7 @@ class RepoListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_repo_list)
 
-        scheduleSync()
+        //scheduleSync()
 
         ReactiveNetwork.observeNetworkConnectivity(applicationContext)
                 .subscribeOn(Schedulers.io())

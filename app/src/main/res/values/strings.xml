@@ -31,4 +31,5 @@
     <string name="no_pull_request_at_this_moment">No pull request at this moment</string>
     <string name="repo_description">repo description</string>
     <string name="language">language</string>
+    <string name="liked_repo">Liked/Not-liked repository</string>
 </resources>

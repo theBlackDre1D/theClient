@@ -10,6 +10,8 @@ import android.view.ViewGroup
 import com.example.theblackdre1d.theclient.R
 import khttp.get
 import kotlinx.android.synthetic.main.readme_fragment.view.*
+import us.feras.mdv.MarkdownView
+
 /*
 * Fragment showing README file.
 * One request to obtaing README file.
@@ -19,8 +21,9 @@ class ReadmeFragment(val userName: String, val repoName: String, val branch: Str
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val rootView = inflater.inflate(R.layout.readme_fragment, container, false)
-        val stringRepo = GetREADME(userName, repoName, branch).execute().get()
-        rootView.readmeTextView.text = stringRepo
+        val stringReadme = GetREADME(userName, repoName, branch).execute().get()
+        val markDown = rootView.markDownView as MarkdownView
+        markDown.loadMarkdown(stringReadme)
         return rootView
     }
 }

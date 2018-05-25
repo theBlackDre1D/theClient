@@ -50,9 +50,14 @@ import java.util.*
 * */
 class RepoListActivity : AppCompatActivity() {
 
+    private var gitHubUserRepos: List<GitHubRepository>? = null
+    private lateinit var userToken: String
     /*
-    * Check if user is connected to the internet. If not redirect to the network settings.
-    * Scheduling synchronization of commits and pull requests
+    * Checking internet connection - if connected OK else show alert and redirect to network settings.
+    * Initialization of UI elements.
+    * Request on GitHub server for fetch user information and display profile picture with Picasso library.
+    * Request on GitHub server for user's repositories and display them using RepoListAdapter.kt.
+    * Setting information for sync using saveInformationForSync().
     * */
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,18 +82,17 @@ class RepoListActivity : AppCompatActivity() {
                         }
                     }.show()
                 }
-    }
+        // Shared preferences initialization
+        val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
+        userToken = sharedPreferences.getString("access_token",null)
+        gitHubUserRepos = GetUserRepos(userToken).execute().get()
 
-    /*
-    * Checking internet connection - if connected OK else show alert and redirect to network settings.
-    * Initialization of UI elements.
-    * Request on GitHub server for fetch user information and display profile picture with Picasso library.
-    * Request on GitHub server for user's repositories and display them using RepoListAdapter.kt.
-    * Setting information for sync using saveInformationForSync().
-    * */
-    @SuppressLint("CommitPrefEdits")
-    override fun onResume() {
-        super.onResume()
+        gitHubUserRepos?.let {
+            launch {
+                saveInformationForSync(gitHubUserRepos!!, userToken)
+            }
+        }
+
         val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = connectivityManager.activeNetworkInfo
         networkInfo?.let {
@@ -100,9 +104,7 @@ class RepoListActivity : AppCompatActivity() {
             val createdAt = createdAtTextView as TextView
             repositoriesTable.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
             val repositoriesList = ArrayList<Repository>()
-            // Shared preferences initialization
-            val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
-            val userToken: String = sharedPreferences.getString("access_token",null)
+
             // ==== Obtaining information from GitHub ====
             // Obtain user details
             var name = Prefs.getString("userName", null)
@@ -141,9 +143,9 @@ class RepoListActivity : AppCompatActivity() {
             }
 
             // ==== Obtain user repos ===
-            val gitHubUserRepos = GetUserRepos(userToken).execute().get()
+
             if (gitHubUserRepos != null) {
-                for (repo in gitHubUserRepos) {
+                for (repo in gitHubUserRepos!!) {
                     var description: String?
                     val nameOfRepo = repo.name
                     val language = repo.language
@@ -156,9 +158,6 @@ class RepoListActivity : AppCompatActivity() {
                     repositoriesList.add(repository)
                 }
 
-                launch {
-                    saveInformationForSync(gitHubUserRepos, userToken!!)
-                }
             } else {
                 Toast.makeText(applicationContext, "You have to re-login.", Toast.LENGTH_SHORT).show()
                 Prefs.putBoolean("skip", false)

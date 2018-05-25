@@ -39,9 +39,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-//        val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
-//        val token: String? = sharedPreferences.getString("access_token",null)
-
+        val sharedPreferences: SharedPreferences = application.getSharedPreferences("access_token", Context.MODE_PRIVATE)
+        val token: String? = sharedPreferences.getString("access_token",null)
+        if (token != null) {
+            val intent = Intent(this, RepoListActivity::class.java)
+            startActivity(intent)
+        }
         Prefs.Builder()
                 .setContext(this)
                 .setMode(Context.MODE_PRIVATE)
@@ -65,10 +68,6 @@ class MainActivity : AppCompatActivity() {
                         }
                     }.show()
                 }
-//        if (token != null) {
-//            val intent = Intent(this, RepoListActivity::class.java)
-//            startActivity(intent)
-//        }
 
         //Setting up font
         val font: Typeface = Typeface.createFromAsset(assets,"fonts/Atlantic Bentley.ttf")

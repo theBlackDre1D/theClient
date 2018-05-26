@@ -125,12 +125,14 @@
                 android:textColor="#262626"/>
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/heartImageView"
                 android:layout_width="91dp"
                 android:layout_height="40dp"
                 android:layout_gravity="center"
                 android:contentDescription="@string/liked_repo"
-                app:srcCompat="@drawable/empty_heart"/>
+                app:srcCompat="@drawable/empty_heart"
+                android:clickable="true"
+                android:onClick="addToFavorites"/>
                 <!--android:clickable="true"-->
                 <!--android:focusable="true"/>-->
 

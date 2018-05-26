@@ -1,6 +1,5 @@
 package com.example.theblackdre1d.theclient.Activities
 
-import android.annotation.SuppressLint
 import android.app.job.JobInfo
 import android.app.job.JobScheduler
 import android.content.ComponentName
@@ -21,10 +20,7 @@ import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.view.animation.LayoutAnimationController
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import com.example.theblackdre1d.theclient.Adapters.RepoListAdapter
 import com.example.theblackdre1d.theclient.Fragments.GetRepoPulls
 import com.example.theblackdre1d.theclient.Fragments.GetReposCommits
@@ -41,9 +37,11 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import khttp.get
 import kotlinx.android.synthetic.main.activity_repo_list.*
+import kotlinx.android.synthetic.main.repository_layout.*
 import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.*
 import java.util.*
+import kotlin.collections.ArrayList
 
 /*
 * Class handle fetching and showing user repos
@@ -52,6 +50,7 @@ class RepoListActivity : AppCompatActivity() {
 
     private var gitHubUserRepos: List<GitHubRepository>? = null
     private lateinit var userToken: String
+    private val favoritesRepos = ArrayList<String>()
     /*
     * Checking internet connection - if connected OK else show alert and redirect to network settings.
     * Initialization of UI elements.
@@ -63,7 +62,8 @@ class RepoListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_repo_list)
-
+//        val progressBar = progressBar as ProgressBar
+//        progressBar.visibility = View.GONE
         //scheduleSync()
 
         ReactiveNetwork.observeNetworkConnectivity(applicationContext)
@@ -87,11 +87,11 @@ class RepoListActivity : AppCompatActivity() {
         userToken = sharedPreferences.getString("access_token",null)
         gitHubUserRepos = GetUserRepos(userToken).execute().get()
 
-        gitHubUserRepos?.let {
-            launch {
-                saveInformationForSync(gitHubUserRepos!!, userToken)
-            }
-        }
+//        gitHubUserRepos?.let {
+//            launch {
+//                saveInformationForSync(gitHubUserRepos!!, userToken)
+//            }
+//        }
 
         val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = connectivityManager.activeNetworkInfo
@@ -157,7 +157,6 @@ class RepoListActivity : AppCompatActivity() {
                     val repository = Repository(nameOfRepo ?: "No-name", description, language ?: "-", name)
                     repositoriesList.add(repository)
                 }
-
             } else {
                 Toast.makeText(applicationContext, "You have to re-login.", Toast.LENGTH_SHORT).show()
                 Prefs.putBoolean("skip", false)
@@ -255,6 +254,10 @@ class RepoListActivity : AppCompatActivity() {
         Prefs.putBoolean("skip", false)
     }
 
+    private fun addToFavorites(row: Repository, imageView: ImageView) {
+        favoritesRepos.add(row.name)
+        imageView.setImageResource(R.drawable.red_heart)
+    }
     private fun nullUserDetails() {
         Prefs.putString("userName", null)
         Prefs.putString("avatarUrl", null)

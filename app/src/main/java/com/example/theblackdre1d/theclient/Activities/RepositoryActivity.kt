@@ -14,6 +14,7 @@ import com.example.theblackdre1d.theclient.Fragments.CodeFragment
 import com.example.theblackdre1d.theclient.Fragments.CommitsFragment
 import com.example.theblackdre1d.theclient.Fragments.PullRequestsFragment
 import com.example.theblackdre1d.theclient.Fragments.ReadmeFragment
+import com.example.theblackdre1d.theclient.Models.SimpleUser
 import com.example.theblackdre1d.theclient.R
 import com.github.pwittchen.reactivenetwork.library.rx2.ConnectivityPredicate
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork

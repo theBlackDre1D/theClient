@@ -25,17 +25,6 @@ class ContentListAdapter(private val items: List<GitHubRepoContent>, val clickLi
     override fun onBindViewHolder(holder: CodeHolder, position: Int) {
         val row: GitHubRepoContent = items[position]
         holder.bind(row, clickListener)
-//        if (row.type == "dir") {
-//            holder.avatarImageView.setImageResource(R.drawable.directory)
-//        } else {
-//            holder.avatarImageView.setImageResource(R.drawable.file)
-//        }
-//        holder.repositoryName.text = row.name
-//        holder.repositoryPath.text = row.path
-//        holder.itemView.setOnClickListener {
-//            val toast = Toast.makeText(holder.itemView.context, "Au, that hurts!", Toast.LENGTH_SHORT)
-//            toast.show()
-//        }
     }
 }
 
@@ -52,8 +41,6 @@ class CodeHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         repositoryName.text = row.name
         repositoryPath.text = row.path
         itemView.setOnClickListener {
-//            val toast = Toast.makeText(holder.itemView.context, "Au, that hurts!", Toast.LENGTH_SHORT)
-//            toast.show()
             clickListener(row)
         }
     }

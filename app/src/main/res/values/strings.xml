@@ -28,7 +28,7 @@
     <string name="date_of_commit">date of commit</string>
     <string name="date_of_creation_pull_request">date of creation pull request</string>
     <string name="pull_request_image">pull request image</string>
-    <string name="no_pull_request_at_this_moment">No pull request at this moment</string>
+    <string name="no_pull_requests_at_this_moment">No pull requests at this moment</string>
     <string name="repo_description">repo description</string>
     <string name="language">language</string>
     <string name="liked_repo">Liked/Not-liked repository</string>

@@ -16,8 +16,9 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        tools:listitem="@layout/pull_request_item"
-        >
+        android:visibility="gone"
+        tools:listitem="@layout/pull_request_item">
+
     </android.support.v7.widget.RecyclerView>
 
     <ImageView
@@ -28,24 +29,25 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="160dp"
         android:contentDescription="@string/pull_request_image"
-        android:visibility="gone"
+        android:visibility="visible"
         app:srcCompat="@drawable/pull_request" />
 
     <TextView
         android:id="@+id/noPullsTextView"
-        android:layout_width="340dp"
-        android:layout_height="43dp"
+        android:layout_width="362dp"
+        android:layout_height="61dp"
         android:layout_alignParentBottom="true"
+        android:layout_below="@id/pullsImageView"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="202dp"
+        android:layout_marginBottom="126dp"
+        android:layout_marginTop="15dp"
         android:fontFamily="cursive"
-        android:visibility="gone"
-        android:text="@string/no_pull_request_at_this_moment"
+        android:text="@string/no_pull_requests_at_this_moment"
+        android:textAlignment="center"
         android:textAllCaps="false"
         android:textSize="30sp"
         android:textStyle="bold"
         android:typeface="normal"
-        android:layout_marginTop="10dp"
-        android:layout_below="@id/pullsImageView"/>
+        android:visibility="visible" />
 
 </RelativeLayout>

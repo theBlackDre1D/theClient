@@ -1,5 +1,7 @@
 package com.example.theblackdre1d.theclient.Models
 import com.squareup.moshi.Json
+import io.realm.RealmModel
+
 /*
 * Data class for store information from GitHub server about commits.
 * */
@@ -12,7 +14,7 @@ data class GitHubCommit (
 		@Json(name = "author") val author: 						Owner?,
 		@Json(name = "committer") val committer: 				Owner?,
 		@Json(name = "parents") val parents: 					List<Parent?>?
-)
+) : RealmModel
 
 data class Parent (
 		@Json(name = "sha") val sha: 							String?,

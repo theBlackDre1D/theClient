@@ -1,5 +1,9 @@
 package com.example.theblackdre1d.theclient.Models
 import com.squareup.moshi.Json
+import io.realm.RealmList
+import io.realm.RealmModel
+import io.realm.RealmObject
+
 /*
 * Data class for store information from GitHub server about pull requests.
 * */
@@ -32,7 +36,7 @@ data class GitHubPullRequest (
         @Json(name = "base") val base:                                  Base?,
         @Json(name = "_links") val linksPullRequest:                    LinksPullRequest?,
         @Json(name = "author_association") val authorAssociation:       String?
-)
+) : RealmModel
 
 data class LinksPullRequest(
 		@Json(name = "self") val self:                                  Self?,

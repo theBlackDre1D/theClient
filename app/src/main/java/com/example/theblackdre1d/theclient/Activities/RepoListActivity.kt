@@ -35,12 +35,10 @@ import com.pixplicity.easyprefs.library.Prefs
 import com.squareup.picasso.Picasso
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import io.realm.Realm
 import khttp.get
 import kotlinx.android.synthetic.main.activity_repo_list.*
-import kotlinx.android.synthetic.main.repository_layout.*
-import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.*
-import java.util.*
 import kotlin.collections.ArrayList
 
 /*
@@ -50,7 +48,8 @@ class RepoListActivity : AppCompatActivity() {
 
     private var gitHubUserRepos: List<GitHubRepository>? = null
     private lateinit var userToken: String
-    private val favoritesRepos = ArrayList<String>()
+//    private val favoritesRepos = ArrayList<String>()
+    private val database = Realm.getDefaultInstance()
     /*
     * Checking internet connection - if connected OK else show alert and redirect to network settings.
     * Initialization of UI elements.
@@ -62,8 +61,7 @@ class RepoListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_repo_list)
-//        val progressBar = progressBar as ProgressBar
-//        progressBar.visibility = View.GONE
+
         //scheduleSync()
 
         ReactiveNetwork.observeNetworkConnectivity(applicationContext)
@@ -143,7 +141,6 @@ class RepoListActivity : AppCompatActivity() {
             }
 
             // ==== Obtain user repos ===
-
             if (gitHubUserRepos != null) {
                 for (repo in gitHubUserRepos!!) {
                     var description: String?
@@ -176,6 +173,10 @@ class RepoListActivity : AppCompatActivity() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        database.close()
+    }
     /*
     * One input parameter - list of users's repositories.
     * Saving last commit and last pull request for every repository. Object saved in JSON format in SharedPreferencies.
@@ -230,8 +231,7 @@ class RepoListActivity : AppCompatActivity() {
     private fun scheduleSync() {
         val componentName = ComponentName(this, ReposSync::class.java)
         val scheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
-        SetupSync(componentName, scheduler).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get()
-
+        SetupSync(componentName, scheduler).execute().get()
     }
     /*
     * Logging out user - delete token from SharedPreferencies and redirect to MainActivity.kt
@@ -254,10 +254,6 @@ class RepoListActivity : AppCompatActivity() {
         Prefs.putBoolean("skip", false)
     }
 
-    private fun addToFavorites(row: Repository, imageView: ImageView) {
-        favoritesRepos.add(row.name)
-        imageView.setImageResource(R.drawable.red_heart)
-    }
     private fun nullUserDetails() {
         Prefs.putString("userName", null)
         Prefs.putString("avatarUrl", null)

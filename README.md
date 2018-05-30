@@ -1,6 +1,8 @@
 # theClient  
 Open source GitHub client for Android using Kotlin. 
-
+  
+### Please note: Synchronization is off temporarily
+  
 OAuth2 authentification.  
 Synchronization of repo's commits and pull requests via JobService - synchronization is activated every 15 minutes approximately.  
   

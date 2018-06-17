@@ -32,6 +32,8 @@ class RepositoryActivity : AppCompatActivity() {
     var repoName = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_repository)
         // UI elements

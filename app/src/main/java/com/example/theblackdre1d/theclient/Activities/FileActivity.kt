@@ -24,6 +24,9 @@ import org.jetbrains.anko.alert
 * */
 class FileActivity : AppCompatActivity() {
 
+    lateinit var file: String
+//    lateinit var codeView: HighlightJsView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_file)
@@ -36,7 +39,7 @@ class FileActivity : AppCompatActivity() {
 //        val token = settings?.getString("access_token", null)
         val gson = Gson()
         val row = gson.fromJson<GitHubRepoContent>(JSONrow, GitHubRepoContent::class.java)
-        val file = GetFile(userName, repoName, "master", row.path!!).execute().get()
+        file = GetFile(userName, repoName, "master", row.path!!).execute().get()
 
         val codeView = codeView as HighlightJsView
         codeView.setSource(file)
